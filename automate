@@ -29,7 +29,7 @@ config = ConfigObj("automate.conf")
 lock_files = glob.glob(os.path.join(config['run_path'], "*.pid"))
 
 # if there are other builders, exit
-if len(lock_files) >= config['concurrent_builder']:
+if len(lock_files) >= config['concurrent_builders']:
     sys.exit(0)
 
 # debug?
@@ -97,7 +97,7 @@ if len(queue_files) > 0:
     new_changelog.close()
     
     functions.command_result("debuild -S -sa -uc -us", False)
-    os.chdir(config['automate_path')
+    os.chdir(config['automate_path'])
     
     dsc = glob.glob(os.path.join(distarch_source_dir, "*" + queue_object['dist'] + ".dsc"))[0]
     functions.debug_message(options.debug, dsc)
