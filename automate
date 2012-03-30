@@ -1,0 +1,166 @@
+#!/usr/bin/env python
+
+# copyright 2011-2012 Stefano Karapetsas <stefano@karapetsas.com>
+
+import atexit
+import cowbuilder
+import functions
+import glob
+import incoming
+import optparse
+import os
+import pwd
+import sys
+
+from configobj import ConfigObj
+
+# this will remove the lock file at exit
+def goodbye(lock_file):
+    os.remove(lock_file)
+
+# check if user is root
+usrinfo = pwd.getpwuid(os.getuid())
+if not usrinfo.pw_name == "root":
+    print "E: root privileges required!"
+    sys.exit(1)
+
+config = ConfigObj("automate.conf")
+
+lock_files = glob.glob(os.path.join(config['run_path'], "*.pid"))
+
+# if there are other builders, exit
+if len(lock_files) >= config['concurrent_builder']:
+    sys.exit(0)
+
+# debug?
+parser = optparse.OptionParser()
+parser.add_option("-d", "--debug", dest="debug", action="store_true")
+(options, args) = parser.parse_args()
+
+lock_file = os.path.join(config['run_path'], str(os.getpid()) + ".pid")
+
+# load build queue
+queue_files = glob.glob(os.path.join(config['queue_path'], "*.json"))
+# load import to repo requests
+import_files = glob.glob(os.path.join(config['builds_path'], "*/import.request"))
+
+if len(queue_files) > 0:
+    
+    queue_file = sorted(queue_files)[0]
+    queue_object = functions.json_load(queue_file)
+    
+    # delete the file
+    os.remove(queue_file)
+    
+    # open lockfile
+    lock_fd = open(lock_file, "w")
+    lock_fd.write(queue_file + "\n")
+    lock_fd.close()
+    atexit.register(goodbye, lock_file)
+    
+    logs_path = os.path.join(queue_object['source_dir'], "../log")
+    if not os.path.exists(logs_path):
+        os.makedirs(logs_path)
+    
+    ret_file = os.path.join(logs_path, queue_object['dist'] + "_" + queue_object['arch'] + ".ret")
+    log_file = os.path.join(logs_path, queue_object['dist'] + "_" + queue_object['arch'] + ".log")
+    update_log_file = log_file + ".update"
+    
+    logs_to_remove = [ret_file, log_file, update_log_file]
+    for log_to_remove in logs_to_remove:
+        if os.path.exists(log_to_remove):
+            os.remove(log_to_remove)
+    
+    distarch_source_dir = os.path.join(queue_object['source_dir'], "../tmp", \
+        queue_object['dist'] + "-" + queue_object['arch'])
+    os.makedirs(distarch_source_dir)
+
+    os.system("cp %(src)s %(dst)s" % \
+            { "src": os.path.join(queue_object['source_dir'], "*.*"),
+              "dst": distarch_source_dir})
+    
+    os.chdir(distarch_source_dir)
+    functions.command_result("dpkg-source -x " + \
+        glob.glob(os.path.join(distarch_source_dir, "*.dsc"))[0], False)
+    tmp_path = glob.glob(queue_object['package'] + "-*")[0]
+    os.chdir(tmp_path)
+    
+    # adapt the changelog version for the selected distro name
+    orig_changelog_file = open("debian/changelog", "r")
+    orig_changelog = orig_changelog_file.read().splitlines()
+    orig_changelog[0] = orig_changelog[0].replace(")", "+" + queue_object['dist'] + ")")
+    if queue_object['dist'] in ["oneiric", "precise"]:
+        orig_changelog[0] = orig_changelog[0].replace("unstable", queue_object['dist'])
+    orig_changelog_file.close()
+    new_changelog = open("debian/changelog", "w")
+    new_changelog.write("\n".join(orig_changelog))
+    new_changelog.close()
+    
+    functions.command_result("debuild -S -sa -uc -us", False)
+    os.chdir(config['automate_path')
+    
+    dsc = glob.glob(os.path.join(distarch_source_dir, "*" + queue_object['dist'] + ".dsc"))[0]
+    functions.debug_message(options.debug, dsc)
+    
+    # prepare result path
+    result_path = os.path.join(queue_object['source_dir'], "../result", \
+        queue_object['dist'], queue_object['arch'])
+    if not os.path.exists(result_path):
+        os.makedirs(result_path)
+    
+    # cowbuilder
+    cb = cowbuilder.CowBuilder(queue_object['dist'], queue_object['arch'], log_file, result_path)
+    # apt-get update && apt-get upgrade
+    ret = cb.update()
+    if ret == 0:
+        # start build
+        ret = cb.build(dsc)
+    
+    # ret_file is declared before, because it's removed on rebuild
+    ret_fd = open(ret_file, "w")
+    ret_fd.write(str(ret))
+    ret_fd.close()
+    
+    # remove temp source dir
+    os.system("rm -rf " + distarch_source_dir + "/")
+
+elif len(import_files) > 0:
+    
+    import_file = import_files[0]
+    os.remove(import_file)
+    
+    build_dir = os.path.dirname(import_file)
+    build = functions.json_load(os.path.join(build_dir, "build.json"))
+    
+    lock_fd = open(lock_file, "w")
+    lock_fd.write(import_file + "\n")
+    lock_fd.close()
+    atexit.register(goodbye, lock_file)
+    
+    log_file = os.path.join(build_dir, "import.log")
+
+    for dist in build['dists']:
+        
+        #hardcode for archs
+        os.system("cp %(src)s %(dst)s" % \
+            { "src": os.path.join(build_dir, "result", dist, "i386/*"),
+              "dst": os.path.join(config['repo_path'], functions.distro_name(dist), "incoming-" + dist)})
+        
+        os.system("cp %(src)s %(dst)s" % \
+            { "src": os.path.join(build_dir, "result", dist, "amd64/*"),
+              "dst": os.path.join(config['repo_path'], functions.distro_name(dist), "include-" + dist)})
+        
+        os.chdir(os.path.join(config['repo_path'], functions.distro_name(dist)))
+        os.system("./processincoming-%(dist)s.sh >> %(log)s" % \
+            { "dist": dist,
+              "log": log_file})
+        os.system("./includedebs-%(dist)s.sh >> %(log)s" % \
+            { "dist": dist,
+              "log": log_file})
+        os.chdir(config['automate_path'])
+
+else:
+    
+    incoming_manager = incoming.Incoming(config)
+    incoming_manager.run_queue()
+
