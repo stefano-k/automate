@@ -4,7 +4,6 @@
 
 import functions
 import glob
-import hashlib
 import os
 import pwd
 import sys
@@ -43,7 +42,7 @@ class Incoming:
                     if source_file['size'] != str(os.stat(source_file_path).st_size):
                         print "E: %s has not a valid size!" % source_file_path
                         sha1_checksum = False
-                    elif source_file['sha1'] != hashlib.sha1(open(source_file_path, "rb").read()).hexdigest():
+                    elif source_file['sha1'] != functions.sha1file(source_file_path):
                         print "E: %s has not a valid SHA1 checksum!" % source_file_path
                         sha1_checksum = False
                     

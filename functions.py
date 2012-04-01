@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import subprocess
@@ -26,10 +27,16 @@ def json_save(json_object, json_file):
     json_fd.close()
 
 def distro_name(distro_codename):
-    if distro_codename == "wheezy":
+    if distro_codename in ["wheezy", "squeeze"]:
         return "debian"
-    elif distro_codename == "oneiric":
+    elif distro_codename in ["precise", "oneiric", "natty", "maverick", "lucid", "karmic", "jaunty", "hardy"]:
         return "ubuntu"
-    elif distro_codename == "precise":
-        return "ubuntu"
-    
+    else:
+        print "E: unknown distro name (%s)!" % distro_codename
+        sys.exit(1)
+
+def sha1file(filepath):
+    if os.path.exists(filepath):
+        return hashlib.sha1(open(filepath, "rb").read()).hexdigest()
+    else:
+        return ""
