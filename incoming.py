@@ -23,10 +23,8 @@ class Incoming:
         # check for *.changes in incoming directory
         for changes_file in glob.glob(os.path.join(self.config['incoming_path'], "*.changes")):
             
-            print "I: found %s" % changes_file
-            
             # check gpg key
-            gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file})
+            gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)
             
             if gpg_res == 0:
                 
