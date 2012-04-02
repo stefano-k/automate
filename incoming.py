@@ -106,6 +106,8 @@ class Incoming:
                     sendmail = os.popen("sendmail -t", "w")
                     sendmail.write("From: %s\n" % "MATE Build Daemon <mate@karapetsas.com>")
                     sendmail.write("To: %s\n" % deb_changes['Changed-By'])
+                    if deb_changes['Maintainer'] != deb_changes['Changed-By']:
+                        sendmail.write("Cc: %s\n" % deb_changes['Maintainer'])
                     sendmail.write("Subject: %s ACCEPTED into AutoMate\n" % os.path.basename(changes_file))
                     sendmail.write("\n")
                     sendmail.write("Accepted:\n")
