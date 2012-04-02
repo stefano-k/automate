@@ -140,28 +140,31 @@ elif len(import_files) > 0:
     
     log_file = os.path.join(build_dir, "import.log")
     
-    # check md5sum of *.orig.tar.xz source if already in repository
-    src_file = glob.glob(os.path.join(build_dir, "source", "*.orig.*"))[0]
-    src_basename = os.path.basename(src_file)
-    if src_basename[0:4] == "lib":
-        pool_path = src_basename[0:4]
-    else:
-        pool_path = src_basename[0]
-    for dist in build['dists']:
-        src_repo_file = os.path.join(config['repo_path'], functions.distro_name(dist), \
-            "pool/main", pool_path, build['package'], src_basename)
-        if os.path.exists(src_repo_file):
-            if functions.sha1file(src_file) != functions.sha1file(src_repo_file):
-                print "E: %s doesnt match with %s already in repo! Import failed!" % \
-                    (src_file, src_repo_file)
-                import_error_file = os.path.join(build_dir, "import.error")
-                import_error_fd = open(import_error_file, "w")
-                import_error_fd.write("%s doesnt match with %s already in repo! Import failed!\n" % \
-                    (src_file, src_repo_file))
-                import_error_fd.write("%s %s\n" % (src_file, functions.sha1file(src_file)))
-                import_error_fd.write("%s %s\n\n" % (src_repo_file, functions.sha1file(src_repo_file)))
-                import_error_fd.close()
-                sys.exit(1)
+    # check sha1 of *.orig.tar.xz source if already in repository
+    # only for non-native source packages
+    src_files = glob.glob(os.path.join(build_dir, "source", "*.orig.*"))
+    if len(src_files) == 1:
+        src_file = src_files[0]
+        src_basename = os.path.basename(src_file)
+        if src_basename[0:4] == "lib":
+            pool_path = src_basename[0:4]
+        else:
+            pool_path = src_basename[0]
+        for dist in build['dists']:
+            src_repo_file = os.path.join(config['repo_path'], functions.distro_name(dist), \
+                "pool/main", pool_path, build['package'], src_basename)
+            if os.path.exists(src_repo_file):
+                if functions.sha1file(src_file) != functions.sha1file(src_repo_file):
+                    print "E: %s doesnt match with %s already in repo! Import failed!" % \
+                        (src_file, src_repo_file)
+                    import_error_file = os.path.join(build_dir, "import.error")
+                    import_error_fd = open(import_error_file, "w")
+                    import_error_fd.write("%s doesnt match with %s already in repo! Import failed!\n" % \
+                        (src_file, src_repo_file))
+                    import_error_fd.write("%s %s\n" % (src_file, functions.sha1file(src_file)))
+                    import_error_fd.write("%s %s\n\n" % (src_repo_file, functions.sha1file(src_repo_file)))
+                    import_error_fd.close()
+                    sys.exit(1)
 
     # import files with reprepro
     for dist in build['dists']:
