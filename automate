@@ -39,6 +39,14 @@ parser.add_option("-d", "--debug", dest="debug", action="store_true")
 
 lock_file = os.path.join(config['run_path'], str(os.getpid()) + ".pid")
 
+# load changes files
+changes_files = glob.glob(os.path.join(config['incoming_path'], "*.changes"))
+
+if len(changes_files) > 0:
+    
+    incoming_manager = incoming.Incoming(config)
+    incoming_manager.run_queue()
+
 # load build queue
 queue_files = glob.glob(os.path.join(config['queue_path'], "*.json"))
 # load import to repo requests
@@ -188,8 +196,3 @@ elif len(import_files) > 0:
             { "dist": dist,
               "log": log_file})
         os.chdir(config['automate_path'])
-
-else:
-    
-    incoming_manager = incoming.Incoming(config)
-    incoming_manager.run_queue()
