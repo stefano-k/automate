@@ -117,7 +117,8 @@ if len(queue_files) > 0:
         os.makedirs(result_path)
     
     # cowbuilder
-    cb = cowbuilder.CowBuilder(queue_object['dist'], queue_object['arch'], log_file, result_path)
+    pbuilderrc_file = os.path.join(config['automate_path'], "pbuilderrc")
+    cb = cowbuilder.CowBuilder(queue_object['dist'], queue_object['arch'], pbuilderrc_file, log_file, result_path)
     # apt-get update && apt-get upgrade
     ret = cb.update()
     if ret == 0:
