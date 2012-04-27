@@ -14,14 +14,17 @@ from debian import deb822
 
 class Incoming:
     
-    def __init__(self, config):
+    def __init__(self, config, incoming_path, builds_path, queue_path):
         
         self.config = config
+        self.incoming_path = incoming_path
+        self.builds_path = builds_path
+        self.queue_path = queue_path
     
     def run_queue(self):
 
         # check for *.changes in incoming directory
-        for changes_file in glob.glob(os.path.join(self.config['incoming_path'], "*.changes")):
+        for changes_file in glob.glob(os.path.join(self.incoming_path, "*.changes")):
             
             # check gpg key
             gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)
@@ -35,7 +38,7 @@ class Incoming:
                 sha1_checksum = True
                 source_files = deb_changes['Checksums-Sha1']
                 for source_file in source_files:
-                    source_file_path = os.path.join(self.config['incoming_path'], source_file['name'])
+                    source_file_path = os.path.join(self.incoming_path, source_file['name'])
                     
                     if source_file['size'] != str(os.stat(source_file_path).st_size):
                         print "E: %s has not a valid size!" % source_file_path
@@ -47,10 +50,10 @@ class Incoming:
                 if sha1_checksum:
                     
                     # calculate the next build id
-                    build_id = str(len(glob.glob(os.path.join(self.config['builds_path'], "*"))) + 1)
+                    build_id = str(len(glob.glob(os.path.join(self.builds_path, "*"))) + 1)
                     
                     # build paths
-                    build_dir = os.path.join(self.config['builds_path'], build_id)
+                    build_dir = os.path.join(self.builds_path, build_id)
                     build_dir_source = os.path.join(build_dir, "source")
                     
                     # move files to new source directory
@@ -58,7 +61,7 @@ class Incoming:
                     os.system("chmod 777 %s" % build_dir)
                     os.rename(changes_file, os.path.join(build_dir_source, os.path.basename(changes_file)))
                     for source_file in source_files:
-                        source_file_path = os.path.join(self.config['incoming_path'], source_file['name'])
+                        source_file_path = os.path.join(self.incoming_path, source_file['name'])
                         os.rename(source_file_path, os.path.join(build_dir_source, os.path.basename(source_file['name'])))
                     
                     # save package info
@@ -89,7 +92,7 @@ class Incoming:
                             queue['dist'] = dist
                             queue['arch'] = arch
                             
-                            queue_filename = os.path.join(self.config['queue_path'], \
+                            queue_filename = os.path.join(self.queue_path, \
                                 "%(id)s_%(package)s_%(version)s_%(dist)s_%(arch)s.json" % \
                                 {
                                     "id": build_id,

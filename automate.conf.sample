@@ -1,9 +1,5 @@
 concurrent_builders = 2
 dists = wheezy, oneiric, precise
 archs = i386, amd64
-automate_path = /path/to/automate
-incoming_path = /path/to/automate/ftp/upload
-builds_path = /path/to/automate/builds
-queue_path = /path/to/automate/queue
-run_path = /path/to/automate/run
-repo_path = /pat/to/www/repo/
+add_suffix = yes
+repo_path = /path/to/www/repo/
