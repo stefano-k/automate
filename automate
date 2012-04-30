@@ -19,6 +19,7 @@
 
 import argparse
 import atexit
+import configobj
 import cowbuilder
 import functions
 import glob
@@ -26,8 +27,6 @@ import incoming
 import os
 import pwd
 import sys
-
-from configobj import ConfigObj
 
 # arguments
 parser = argparse.ArgumentParser()
@@ -48,7 +47,7 @@ if not usrinfo.pw_name == "root":
 automate_path = os.path.dirname(os.path.realpath(__file__))
 instance_path = os.path.join(automate_path, "instances", args.instance
 
-config = ConfigObj(os.path.join(instante_path, "automate.conf"))
+config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
 
 incoming_path = os.path.join(instance_path, "upload")
 builds_path = os.path.join(instance_path, "builds")

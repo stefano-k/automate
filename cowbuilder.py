@@ -30,6 +30,13 @@ class CowBuilder():
         self.logfile = logfile
         self.buildresult = buildresult
 
+    def create(self):
+        
+        command = ["/usr/sbin/cowbuilder", "--create"]
+        command.extend(["--configfile", self.configfile])
+        
+        return self.execute(command)
+
     def update(self):
         
         command = ["/usr/sbin/cowbuilder", "--update"]

@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+# copyright 2011-2012 Stefano Karapetsas <stefano@karapetsas.com>
+
+# This file is part of AutoMate.
+#
+# AutoMate is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# AutoMate is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with AutoMate.  If not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import configobj
+import cowbuilder
+import os
+import shutil
+
+# arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("--create", action="store_true")
+parser.add_argument("--create-pbuilder", action="store_true")
+parser.add_argument("--instance", type=str, default="automate")
+args = parser.parse_args()
+
+instance_path = os.path.join(automate_path, "instances", args.instance
+
+if args.create:
+
+    if not os.path.exists(instance_path):
+        os.makedirs(instance_path, 0777)
+
+        for folder in ["upload", "builds", "queue", "run"]:
+            os.mkdir(os.path.join(instance_path, folder), 0777)
+        
+        shutil.copy("automate.conf.sample", os.path.join(instance_path, "automate.conf"))
+        shutil.copy("pbuilderrc.sample", os.path.join(instance_path, "pbuilderrc"))
+
+    print "Instance %s created"
+    print "Edit automate.conf and pbuilderrc, then exec command:"
+    print "\t./automate-tool --create-pbuilder"
+
+elif args.create-pbuilder:
+    
+    config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
+    pbuilderrc_file = os.path.join(instance_path, "pbuilderrc")
+    
+    for dist in config['dists']:
+        for arch in config['archs']:
+    
+            cb = cowbuilder.CowBuilder(dist, arch, pbuilderrc_file, None, None)
+            ret = cb.create()
+    
