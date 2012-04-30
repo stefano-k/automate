@@ -18,11 +18,20 @@
 import hashlib
 import json
 import os
+import pwd
 import subprocess
+import sys
 
 def debug_message(debug_active, debug_message):
     if debug_active:
         print debug_message
+
+# check if user is root, exit if normal user
+def check_root():
+    usrinfo = pwd.getpwuid(os.getuid())
+    if not usrinfo.pw_name == "root":
+        print "E: root privileges required!"
+        sys.exit(1)
 
 def command_result(command_string, output=True):
     command = command_string.split(" ")

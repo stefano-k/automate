@@ -25,27 +25,32 @@ import functions
 import glob
 import incoming
 import os
-import pwd
 import sys
+
+NAME = "automate"
+VERSION = "0.1"
 
 # arguments
 parser = argparse.ArgumentParser()
+parser.add_argument("--version", action="store_true")
 parser.add_argument("--debug", action="store_true")
 parser.add_argument("--instance", type=str, default="automate")
 args = parser.parse_args()
+
+# version
+if args.version:
+    print NAME, VERSION
+    sys.exit(0)
 
 # this will remove the lock file at exit
 def goodbye(lock_file):
     os.remove(lock_file)
 
 # check if user is root
-usrinfo = pwd.getpwuid(os.getuid())
-if not usrinfo.pw_name == "root":
-    print "E: root privileges required!"
-    sys.exit(1)
+functions.check_root()
 
 automate_path = os.path.dirname(os.path.realpath(__file__))
-instance_path = os.path.join(automate_path, "instances", args.instance
+instance_path = os.path.join(automate_path, "instances", args.instance)
 
 config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
 

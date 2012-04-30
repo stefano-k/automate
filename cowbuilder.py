@@ -59,9 +59,6 @@ class CowBuilder():
         
         os.environ["DIST"] = self.dist
         os.environ["ARCH"] = self.arch
-        #print "    dist:", os.environ["DIST"]
-        #print "    arch:", os.environ["ARCH"]
-        #print "    " + " ".join(command)
         DEVNULL = open('/dev/null', 'w')
         p = subprocess.Popen(command, shell=False, stdout=DEVNULL, stderr=DEVNULL)
         while p.returncode is None:

@@ -20,8 +20,13 @@
 import argparse
 import configobj
 import cowbuilder
+import functions
 import os
 import shutil
+import sys
+
+# check if user is root
+functions.check_root()
 
 # arguments
 parser = argparse.ArgumentParser()
@@ -30,24 +35,33 @@ parser.add_argument("--create-pbuilder", action="store_true")
 parser.add_argument("--instance", type=str, default="automate")
 args = parser.parse_args()
 
-instance_path = os.path.join(automate_path, "instances", args.instance
+automate_path = os.path.dirname(os.path.realpath(__file__))
+instance_path = os.path.join(automate_path, "instances", args.instance)
 
 if args.create:
 
     if not os.path.exists(instance_path):
-        os.makedirs(instance_path, 0777)
+        os.makedirs(instance_path)
 
         for folder in ["upload", "builds", "queue", "run"]:
-            os.mkdir(os.path.join(instance_path, folder), 0777)
+            os.mkdir(os.path.join(instance_path, folder))
+            
+        os.makedirs(os.path.join(instance_path, "pbuilder", "base.cow"))
         
         shutil.copy("automate.conf.sample", os.path.join(instance_path, "automate.conf"))
         shutil.copy("pbuilderrc.sample", os.path.join(instance_path, "pbuilderrc"))
+        
+        os.system("chmod 777 -v -R %s/" % instance_path)
 
-    print "Instance %s created"
-    print "Edit automate.conf and pbuilderrc, then exec command:"
-    print "\t./automate-tool --create-pbuilder"
+        print "\nInstance %s created"
+        print "Edit automate.conf and pbuilderrc, then execute the command:"
+        print "\t./automate-tool --create-pbuilder"
 
-elif args.create-pbuilder:
+elif args.create_pbuilder:
+    
+    if not os.path.exists("/usr/bin/cowbuilder"):
+        print "E: install cowbuilder package first!"
+        sys.exit(1)
     
     config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
     pbuilderrc_file = os.path.join(instance_path, "pbuilderrc")

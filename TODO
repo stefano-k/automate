@@ -1,0 +1,2 @@
+- Create dinamic instance pbuilderrc with options in automate.conf
+- Manage directly reprepro (move repo to instance folder)
