@@ -1,6 +1,5 @@
 PDEBUILD_PBUILDER="cowbuilder"
-EXTRAPACKAGES="lintian mate-archive-keyring"
-HOOKDIR="/var/cache/pbuilder/hooks/"
+EXTRAPACKAGES="@extrapackages@"
 ALLOWUNTRUSTED=yes
 
 # List of suites
@@ -11,10 +10,10 @@ NAME="$DIST-$ARCH"
 DEBOOTSTRAPOPTS=("--arch" "$ARCH" "${DEBOOTSTRAPOPTS[@]}")
 
 DISTRIBUTION="$DIST"
-MIRROR="localhost:9999"
-LOCAL_MIRROR="localhost/mate/repo"
-AUTOMATE_PATH="/opt/automate"
-INSTANCE="automate"
+MIRROR="@mirror@"
+LOCAL_MIRROR="@localmirror@"
+AUTOMATE_PATH="@automate_path@"
+INSTANCE="@instance@"
 INSTANCE_PATH="$AUTOMATE_PATH/instances/$INSTANCE/pbuilder/$NAME"
 BASEPATH="$INSTANCE_PATH/base.cow/"
 APTCACHE="$INSTANCE_PATH/aptcache/"
@@ -25,13 +24,13 @@ if $(echo ${DEBIAN_SUITES[@]} | grep -q $DIST); then
     MIRRORSITE="http://$APPROX/debian/"
     COMPONENTS="main contrib non-free"
     DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--keyring=/usr/share/keyrings/debian-archive-keyring.gpg")
-    OTHERMIRROR="deb http://$/debian/ $DIST main"
+    OTHERMIRROR="deb $LOCAL_MIRROR/debian/ $DIST main"
 elif $(echo ${UBUNTU_SUITES[@]} | grep -q $DIST); then
     # Ubuntu configuration
     MIRRORSITE="http://$APPROX/ubuntu/"
     COMPONENTS="main restricted universe multiverse"
     DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--keyring=/usr/share/keyrings/ubuntu-archive-keyring.gpg")
-    OTHERMIRROR="deb http://localhost/mate/repo/ubuntu/ $DIST main"
+    OTHERMIRROR="deb $LOCAL_MIRROR/ubuntu/ $DIST main"
 else
     echo "Unknown distribution: $DIST"
     exit 1

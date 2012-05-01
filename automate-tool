@@ -22,6 +22,7 @@ import configobj
 import cowbuilder
 import functions
 import os
+import reprepro
 import shutil
 import sys
 
@@ -30,42 +31,88 @@ functions.check_root()
 
 # arguments
 parser = argparse.ArgumentParser()
+parser.add_argument("--prepare", action="store_true")
 parser.add_argument("--create", action="store_true")
-parser.add_argument("--create-pbuilder", action="store_true")
+parser.add_argument("--update-pbuilderrc", action="store_true")
 parser.add_argument("--instance", type=str, default="automate")
 args = parser.parse_args()
 
 automate_path = os.path.dirname(os.path.realpath(__file__))
 instance_path = os.path.join(automate_path, "instances", args.instance)
 
-if args.create:
+if args.prepare:
 
     if not os.path.exists(instance_path):
         os.makedirs(instance_path)
 
+        # base folders
         for folder in ["upload", "builds", "queue", "run"]:
             os.mkdir(os.path.join(instance_path, folder))
-            
+        
+        # configuration files
+        shutil.copy("automate.conf.sample", os.path.join(instance_path, "automate.conf"))
+        
+        # cowbuilder    
         os.makedirs(os.path.join(instance_path, "pbuilder", "base.cow"))
         
-        shutil.copy("automate.conf.sample", os.path.join(instance_path, "automate.conf"))
-        shutil.copy("pbuilderrc.sample", os.path.join(instance_path, "pbuilderrc"))
+        # reprepro
+        os.mkdir(os.path.join(instance_path, "repository"))
         
-        os.system("chmod 777 -v -R %s/" % instance_path)
+        os.system("chmod 777 -R %s/" % instance_path)
 
-        print "\nInstance %s created"
+        print "\nInstance %s prepared"
         print "Edit automate.conf and pbuilderrc, then execute the command:"
-        print "\t./automate-tool --create-pbuilder"
-
-elif args.create_pbuilder:
+        print "\t./automate-tool --create --instance %s" % args.instance
     
-    if not os.path.exists("/usr/bin/cowbuilder"):
+    else:
+        
+        print "E: %s instance already exists!" % args.instance
+        sys.exit(1)
+
+if args.create or args.update_pbuilderrc:
+    
+    config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
+    
+    variables = {
+        "extrapackages": config['extra_packages'],
+        "mirror": config['mirror'],
+        "localmirror": "file://%s" % os.path.join(instance_path, "repository"),
+        "automate_path": automate_path,
+        "instance": args.instance
+    }
+    
+    pbuilderrc_content = open("pbuilderrc.sample").read()
+    
+    for key in variables:
+        
+        pbuilderrc_content = pbuilderrc_content.replace("@" + key + "@", variables[key])
+        
+    pbuilderrc_file = open(os.path.join(instance_path, "pbuilderrc"), "w")
+    pbuilderrc_file.write(pbuilderrc_content)
+    pbuilderrc_file.close()
+
+if args.create:
+    
+    if not os.path.exists("/usr/sbin/cowbuilder"):
         print "E: install cowbuilder package first!"
+        sys.exit(1)
+    
+    if not os.path.exists("/usr/bin/reprepro"):
+        print "E: install reprepro package first!"
         sys.exit(1)
     
     config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
     pbuilderrc_file = os.path.join(instance_path, "pbuilderrc")
     
+    # reprepro
+    for dist in config['dists']:
+        
+        rp = reprepro.Reprepro(instance_path, dist, config['archs'])
+        rp.create_config()
+        
+    sys.exit(1)
+    
+    # cowbuilder
     for dist in config['dists']:
         for arch in config['archs']:
     

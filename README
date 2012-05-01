@@ -1,14 +1,14 @@
 Requirements:
 
-	# sudo apt-get install cowbuilder python-configobj
+	# sudo apt-get install cowbuilder python-configobj reprepro
 
 Create an instance:
 
+	#sudo ./automate-tool --instance test --prepare
+
+	edit configuration file (instances/test/automate.conf)
+
 	#sudo ./automate-tool --instance test --create
-
-	edit configuration files in instances/test/
-
-	#sudo ./automate-tool --instance test --create-pbuilder
 
 	set up your FTP server with anonymous upload to instances/test/upload
 

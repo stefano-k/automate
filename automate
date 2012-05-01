@@ -25,6 +25,7 @@ import functions
 import glob
 import incoming
 import os
+import reprepro
 import sys
 
 NAME = "automate"
@@ -211,22 +212,7 @@ elif len(import_files) > 0:
     # import files with reprepro
     for dist in build['dists']:
         
-        #hardcode for archs
-        os.system("cp %(src)s %(dst)s" % \
-            { "src": os.path.join(build_dir, "result", dist, "i386/*"),
-              "dst": os.path.join(repo_path, functions.distro_name(dist), "incoming-" + dist)})
+        rp = reprepro.Reprepro(instance_path, dist, build['archs'])
+        rp.include_packages(build_dir)
         
-        os.system("cp %(src)s %(dst)s" % \
-            { "src": os.path.join(build_dir, "result", dist, "amd64/*"),
-              "dst": os.path.join(repo_path, functions.distro_name(dist), "include-" + dist)})
-        
-        os.chdir(os.path.join(repo_path, functions.distro_name(dist)))
-        
-        #FIXME: move reprepro commands in shell script into automate
-        os.system("./processincoming-%(dist)s.sh >> %(log)s" % \
-            { "dist": dist,
-              "log": log_file})
-        os.system("./includedebs-%(dist)s.sh >> %(log)s" % \
-            { "dist": dist,
-              "log": log_file})
-        os.chdir(automate_path)
+    
