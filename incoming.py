@@ -89,14 +89,14 @@ class Incoming:
                     package_info['maintainer'] = deb_changes['Maintainer']
                     package_info['changed_by'] = deb_changes['Changed-By']
                     package_info['source_dir'] = build_dir_source
-                    package_info['dists'] = self.config['dists']
-                    package_info['archs'] = self.config['archs']
+                    package_info['dists'] = self.config.as_list('dists')
+                    package_info['archs'] = self.config.as_list('archs')
                     package_info_filename = os.path.join(build_dir, "build.json")
                     functions.json_save(package_info, package_info_filename)
                     
                     # prepare single build requests
-                    for dist in self.config['dists']:
-                        for arch in self.config['archs']:
+                    for dist in self.config.as_list('dists'):
+                        for arch in self.config.as_list('archs'):
                             
                             queue = {}
                             queue['build_id'] = build_id

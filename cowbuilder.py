@@ -35,7 +35,7 @@ class CowBuilder():
         command = ["/usr/sbin/cowbuilder", "--create"]
         command.extend(["--configfile", self.configfile])
         
-        return self.execute(command)
+        return self.execute(command, True)
 
     def update(self):
         
@@ -55,15 +55,19 @@ class CowBuilder():
         
         return self.execute(command)
 
-    def execute(self, command):
+    def execute(self, command, output=False):
         
         os.environ["DIST"] = self.dist
         os.environ["ARCH"] = self.arch
-        DEVNULL = open('/dev/null', 'w')
-        p = subprocess.Popen(command, shell=False, stdout=DEVNULL, stderr=DEVNULL)
+        if output:
+            p = subprocess.Popen(command, shell=False)
+        else:
+            DEVNULL = open('/dev/null', 'w')
+            p = subprocess.Popen(command, shell=False, stdout=DEVNULL, stderr=DEVNULL)
         while p.returncode is None:
             p.poll()
             time.sleep(1)
         #log = p.stdout.read()
-        DEVNULL.close()
+        if not output:
+            DEVNULL.close()
         return p.returncode

@@ -52,8 +52,8 @@ if args.prepare:
         # configuration files
         shutil.copy("automate.conf.sample", os.path.join(instance_path, "automate.conf"))
         
-        # cowbuilder    
-        os.makedirs(os.path.join(instance_path, "pbuilder", "base.cow"))
+        # cowbuilder
+        os.makedirs(os.path.join(instance_path, "pbuilder"))
         
         # reprepro
         os.mkdir(os.path.join(instance_path, "repository"))
@@ -61,7 +61,7 @@ if args.prepare:
         os.system("chmod 777 -R %s/" % instance_path)
 
         print "\nInstance %s prepared"
-        print "Edit automate.conf and pbuilderrc, then execute the command:"
+        print "Edit instances/%s/automate.conf, then execute the command:" % args.instance
         print "\t./automate-tool --create --instance %s" % args.instance
     
     else:
@@ -105,17 +105,17 @@ if args.create:
     pbuilderrc_file = os.path.join(instance_path, "pbuilderrc")
     
     # reprepro
-    for dist in config['dists']:
+    for dist in config.as_list('dists'):
         
-        rp = reprepro.Reprepro(instance_path, dist, config['archs'])
+        rp = reprepro.Reprepro(instance_path, dist, config.as_list('archs'))
         rp.create_config()
-        
-    sys.exit(1)
     
     # cowbuilder
-    for dist in config['dists']:
-        for arch in config['archs']:
+    for dist in config.as_list('dists'):
+        for arch in config.as_list('archs'):
     
+            os.makedirs(os.path.join(instance_path, "pbuilder", dist + "-" + arch, "base.cow"))
+            
             cb = cowbuilder.CowBuilder(dist, arch, pbuilderrc_file, None, None)
             ret = cb.create()
     
