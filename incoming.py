@@ -37,7 +37,7 @@ class Incoming:
         self.builds_path = builds_path
         self.queue_path = queue_path
     
-    def run_queue(self):
+    def run_queue(self, debug):
 
         # check for *.changes in incoming directory
         for changes_file in glob.glob(os.path.join(self.incoming_path, "*.changes")):
@@ -46,6 +46,9 @@ class Incoming:
             gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)
             
             if gpg_res == 0:
+                
+                # debug
+                functions.debug_message(debug, "I: incoming - found %s" % changes_files)
                 
                 # load .changes file
                 deb_changes = deb822.Changes(file(changes_file))

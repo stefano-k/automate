@@ -73,7 +73,7 @@ changes_files = glob.glob(os.path.join(incoming_path, "*.changes"))
 
 if len(changes_files) > 0:
     
-    incoming_manager = incoming.Incoming(config, incoming_path, builds_path, queue_path)
+    incoming_manager = incoming.Incoming(args.instance, config, incoming_path, builds_path, queue_path)
     incoming_manager.run_queue()
 
 # load build queue
