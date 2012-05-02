@@ -130,9 +130,9 @@ class Incoming:
                         sendmail.write("Cc: %s\n" % deb_changes['Maintainer'])
                     sendmail.write("Subject: %(changes)s ACCEPTED into %(instance)s\n" % \
                         {
-                            "changes": os.path.basename(changes_file)),
+                            "changes": os.path.basename(changes_file),
                             "instance": self.instance
-                        }
+                        })
                     sendmail.write("\n")
                     sendmail.write("Accepted:\n")
                     for source_file in source_files:
