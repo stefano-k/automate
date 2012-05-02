@@ -142,7 +142,7 @@ if len(queue_files) > 0:
     else:
         dsc = glob.glob(os.path.join(queue_object['source_dir'], "*.dsc"))[0]
     
-    functions.debug_message(options.debug, dsc)
+    functions.debug_message(args.debug, dsc)
     
     # prepare result path
     result_path = os.path.join(queue_object['source_dir'], "../result", \
@@ -165,7 +165,8 @@ if len(queue_files) > 0:
     ret_fd.close()
     
     # remove temp source dir
-    os.system("rm -rf " + distarch_source_dir + "/")
+    if config.as_bool("add_suffix"):
+        os.system("rm -rf " + distarch_source_dir + "/")
 
 elif len(import_files) > 0:
     
