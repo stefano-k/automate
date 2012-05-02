@@ -48,7 +48,7 @@ class Incoming:
             if gpg_res == 0:
                 
                 # debug
-                functions.debug_message(debug, "I: incoming - found %s" % changes_files)
+                functions.debug_message(debug, "I: incoming - found %s" % changes_file)
                 
                 # load .changes file
                 deb_changes = deb822.Changes(file(changes_file))
