@@ -154,10 +154,10 @@ if len(queue_files) > 0:
     pbuilderrc_file = os.path.join(instance_path, "pbuilderrc")
     cb = cowbuilder.CowBuilder(queue_object['dist'], queue_object['arch'], pbuilderrc_file, log_file, result_path)
     # apt-get update && apt-get upgrade
-    ret = cb.update()
+    ret = cb.update(args.debug)
     if ret == 0:
         # start build
-        ret = cb.build(dsc)
+        ret = cb.build(dsc, args.debug)
     
     # ret_file is declared before, because it's removed on rebuild
     ret_fd = open(ret_file, "w")
@@ -195,6 +195,7 @@ elif len(import_files) > 0:
         else:
             pool_path = src_basename[0]
         for dist in build['dists']:
+            repo_path = os.path.join(instance_path, "repository")
             src_repo_file = os.path.join(repo_path, functions.distro_name(dist), \
                 "pool/main", pool_path, build['package'], src_basename)
             if os.path.exists(src_repo_file):

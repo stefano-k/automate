@@ -30,32 +30,32 @@ class CowBuilder():
         self.logfile = logfile
         self.buildresult = buildresult
 
-    def create(self):
+    def create(self, output):
         
         command = ["/usr/sbin/cowbuilder", "--create"]
         command.extend(["--configfile", self.configfile])
         
-        return self.execute(command, True)
+        return self.execute(command, output)
 
-    def update(self):
+    def update(self, output):
         
         command = ["/usr/sbin/cowbuilder", "--update"]
         command.extend(["--configfile", self.configfile])
         command.extend(["--logfile", self.logfile + ".update"])
         command.extend(["--override-config"])
         
-        return self.execute(command)
+        return self.execute(command, output)
 
-    def build(self, dsc):
+    def build(self, dsc, output):
         
         command = ["/usr/sbin/cowbuilder", "--build", dsc]
         command.extend(["--configfile", self.configfile])
         command.extend(["--logfile", self.logfile])
         command.extend(["--buildresult", self.buildresult])
         
-        return self.execute(command)
+        return self.execute(command, output)
 
-    def execute(self, command, output=False):
+    def execute(self, command, output):
         
         os.environ["DIST"] = self.dist
         os.environ["ARCH"] = self.arch

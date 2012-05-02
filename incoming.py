@@ -25,13 +25,13 @@ import pwd
 import sys
 import time
 
-from configobj import ConfigObj
 from debian import deb822
 
 class Incoming:
     
-    def __init__(self, config, incoming_path, builds_path, queue_path):
+    def __init__(self, instance, config, incoming_path, builds_path, queue_path):
         
+        self.instance = instance
         self.config = config
         self.incoming_path = incoming_path
         self.builds_path = builds_path
@@ -121,11 +121,15 @@ class Incoming:
                             functions.json_save(queue, queue_filename)
                     
                     sendmail = os.popen("sendmail -t", "w")
-                    sendmail.write("From: %s\n" % "MATE Build Daemon <mate@karapetsas.com>")
+                    sendmail.write("From: %s\n" % "AutoMate <mate@karapetsas.com>")
                     sendmail.write("To: %s\n" % deb_changes['Changed-By'])
                     if deb_changes['Maintainer'] != deb_changes['Changed-By']:
                         sendmail.write("Cc: %s\n" % deb_changes['Maintainer'])
-                    sendmail.write("Subject: %s ACCEPTED into AutoMate\n" % os.path.basename(changes_file))
+                    sendmail.write("Subject: %(changes)s ACCEPTED into %(instance)s\n" % \
+                        {
+                            "changes": os.path.basename(changes_file)),
+                            "instance": self.instance
+                        }
                     sendmail.write("\n")
                     sendmail.write("Accepted:\n")
                     for source_file in source_files:
@@ -134,7 +138,7 @@ class Incoming:
                     sendmail.write("%s\n" % deb_changes['Description'])
                     sendmail.write("%s\n" % deb_changes['Changes'])
                     sendmail.write("\n")
-                    sendmail.write("Thank you for your contribution to MATE.\n")
+                    sendmail.write("Thank you for your contribution to %s.\n" % self.instance)
                     sendmail_result = sendmail.close()
                                 
             else:
