@@ -1,26 +1,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <?
-if (isset($_GET['page']))
-    $page = $_GET['page'];
-else
-    $page = 'builds';
+    include("common.php");
+    include("config.php");
+    include("functions.php");
+    include("auth.php");
+    
+    // page
+    if (isset($_GET['page']))
+        $page = $_GET['page'];
+    else
+        $page = 'builds';
+    
+    // instance
+    if (isset($_GET['instance']))
+        $instance = $_GET['instance'];
+    else
+        $instante = $instances[0];
+
 ?>
 <head>
     <title>AutoMate [<? echo $page; ?>]</title>
     <link rel="stylesheet" href="style.css" type="text/css"/>
     <link rel="shortcut icon" href="favicon.ico"/>
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 </head>
 <body>
-    <?
-    include("common.php");
-    include("config.php");
-    include("functions.php");
-    include("auth.php");
-    ?>
     <h1>AutoMate</h1>
-    <p class="menu"><span style="float:right;">mate build daemon web interface
+    <p class="menu"><span style="float:right;">automate build daemon web interface
     <?
     if (isset($user)) {
         echo " (connected as <strong>".$user['username']."</strong>)";

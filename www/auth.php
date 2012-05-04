@@ -7,7 +7,7 @@ function login($username, $password, $hash) {
     if(file_exists($file)) {
         $userfile = json_decode(file_get_contents($file), true);
         if ($hash) {
-            $password = sha1(SALT.$password);
+            $password = sha1($salt.$password);
         }
         if ($password == $userfile['password']) {
             $expires = time() + (60 * 60 * 24 * 60); // 60 days (2 months)
