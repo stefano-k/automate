@@ -41,7 +41,8 @@ class CowBuilder():
         
         command = ["/usr/sbin/cowbuilder", "--update"]
         command.extend(["--configfile", self.configfile])
-        command.extend(["--logfile", self.logfile + ".update"])
+        if self.logfile != None:
+            command.extend(["--logfile", self.logfile + ".update"])
         command.extend(["--override-config"])
         
         return self.execute(command, output)

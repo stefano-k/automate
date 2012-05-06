@@ -11,8 +11,8 @@ DEBOOTSTRAPOPTS=("--arch" "$ARCH" "${DEBOOTSTRAPOPTS[@]}")
 
 DISTRIBUTION="$DIST"
 MIRROR="@mirror@"
-LOCALMIRROR="@localmirror@"
 AUTOMATE_PATH="@automate_path@"
+AUTOMATE_WWW_PATH="@automate_www_path@"
 INSTANCE="@instance@"
 INSTANCE_PATH="$AUTOMATE_PATH/instances/$INSTANCE/pbuilder/$NAME"
 BASEPATH="$INSTANCE_PATH/base.cow/"
@@ -24,13 +24,13 @@ if $(echo ${DEBIAN_SUITES[@]} | grep -q $DIST); then
     MIRRORSITE="http://$MIRROR/debian/"
     COMPONENTS="main contrib non-free"
     DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--keyring=/usr/share/keyrings/debian-archive-keyring.gpg")
-    #OTHERMIRROR="deb $LOCALMIRROR/debian/ $DIST main"
+    OTHERMIRROR="deb $AUTOMATE_WWW_PATH/instances/$INSTANCE/debian/ $DIST main"
 elif $(echo ${UBUNTU_SUITES[@]} | grep -q $DIST); then
     # Ubuntu configuration
     MIRRORSITE="http://$MIRROR/ubuntu/"
     COMPONENTS="main restricted universe multiverse"
     DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--keyring=/usr/share/keyrings/ubuntu-archive-keyring.gpg")
-    #OTHERMIRROR="deb $LOCALMIRROR/ubuntu/ $DIST main"
+    OTHERMIRROR="deb $AUTOMATE_WWW_PATH/instances/$INSTANCE//ubuntu/ $DIST main"
 else
     echo "Unknown distribution: $DIST"
     exit 1

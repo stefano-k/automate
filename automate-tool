@@ -33,6 +33,7 @@ functions.check_root()
 parser = argparse.ArgumentParser()
 parser.add_argument("--prepare", action="store_true")
 parser.add_argument("--create", action="store_true")
+parser.add_argument("--update", action="store_true")
 parser.add_argument("--update-pbuilderrc", action="store_true")
 parser.add_argument("--instance", type=str, default="automate")
 args = parser.parse_args()
@@ -69,15 +70,15 @@ if args.prepare:
         print "E: %s instance already exists!" % args.instance
         sys.exit(1)
 
-if args.create or args.update_pbuilderrc:
+if args.create or args.update or args.update_pbuilderrc:
     
     config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
     
     variables = {
         "extrapackages": config['extra_packages'],
         "mirror": config['mirror'],
-        "localmirror": "file://%s" % os.path.join(instance_path, "repository"),
         "automate_path": automate_path,
+        "automate_www_path": config['automate_www_path'],
         "instance": args.instance
     }
     
@@ -91,7 +92,7 @@ if args.create or args.update_pbuilderrc:
     pbuilderrc_file.write(pbuilderrc_content)
     pbuilderrc_file.close()
 
-if args.create:
+if args.create or args.update:
     
     if not os.path.exists("/usr/sbin/cowbuilder"):
         print "E: install cowbuilder package first!"
@@ -104,11 +105,12 @@ if args.create:
     config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
     pbuilderrc_file = os.path.join(instance_path, "pbuilderrc")
     
-    # reprepro
-    for dist in config.as_list('dists'):
-        
-        rp = reprepro.Reprepro(instance_path, dist, config.as_list('archs'))
-        rp.create_config()
+    if args.create:
+        # reprepro
+        for dist in config.as_list('dists'):
+            
+            rp = reprepro.Reprepro(instance_path, dist, config.as_list('archs'))
+            rp.create_config()
     
     # cowbuilder
     for dist in config.as_list('dists'):
@@ -117,5 +119,8 @@ if args.create:
             os.makedirs(os.path.join(instance_path, "pbuilder", dist + "-" + arch, "base.cow"))
             
             cb = cowbuilder.CowBuilder(dist, arch, pbuilderrc_file, None, None)
-            ret = cb.create()
+            if args.create:
+                ret = cb.create(True)
+            elif args.update:
+                ret = cb.update(True)
     

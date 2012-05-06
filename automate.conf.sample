@@ -4,3 +4,4 @@ archs = i386, amd64
 add_suffix = yes
 extra_packages = "lintian mate-archive-keyring"
 mirror = "localhost:9999"
+automate_www_path = "http://automate.mate-desktop.org"
