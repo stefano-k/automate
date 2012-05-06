@@ -52,29 +52,35 @@ class Reprepro():
     def include_packages(self, build_dir):
         
         reprepro_path = os.path.join(self.instance_path, "repository", self.name)
+        import_log_file = os.path.join(build_dir, "import.log")
+        
+        os.system("date -R >> %(logfile)s" % {"logfile": import_log_file})
         
         # add source
-        os.system("reprepro --basedir %(basedir)s includedsc %(dist) %(dsc)" % \
+        os.system("reprepro -V --basedir %(basedir)s includedsc %(dist)s %(dsc)s >> %(logfile)s" % \
             {
                 "basedir": reprepro_path,
                 "dist": self.dist,
-                "dsc": os.path.join(build_dir, "source", "*.dsc")
+                "dsc": os.path.join(build_dir, "source", "*.dsc"),
+                "logfile": import_log_file
             })
         
         # add architecture "all" packages from first arch
-        os.system("reprepro --basedir %(basedir)s includedeb %(dist) %(deb)" % \
+        os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
             {
                 "basedir": reprepro_path,
                 "dist": self.dist,
-                "deb": os.path.join(build_dir, "result", self.dist, self.archs[0], "*all.deb")
+                "deb": os.path.join(build_dir, "result", self.dist, self.archs[0], "*all.deb"),
+                "logfile": import_log_file
             })
         
         # add other arch-specific packages
         for arch in self.archs:
-            os.system("reprepro --basedir %(basedir)s includedeb %(dist) %(deb)" % \
+            os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
             {
                 "basedir": reprepro_path,
                 "dist": self.dist,
-                "deb": os.path.join(build_dir, "result", self.dist, self.archs[0], "*" + arch + ".deb")
+                "deb": os.path.join(build_dir, "result", self.dist, arch, "*" + arch + ".deb"),
+                "logfile": import_log_file
             })
 

@@ -27,12 +27,16 @@ if (file_exists($res_file)) {
 
         $queue_filename = $queue_path."/".$queue['build_id']."_".$queue['package']."_".$queue['version']."_".$queue['dist']."_".$queue['arch'].".json";
         
+        echo "<h2>rebuild</h2>";
         if (file_put_contents($queue_filename, json_encode($queue))) {
-            
-            echo "<h2>rebuild</h2>";
             
             echo "build #".$build_id." (".$build['package'].".".$build['version'].") for ".$dist."/".$arch." restarted";
             
+        }
+        else {
+            
+            echo "error, cannot write $queue_filename";
+        
         }
         
      }

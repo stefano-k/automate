@@ -11,4 +11,5 @@ if (!file_exists($instance_path."/automate.conf")) {
 
 $builds_path = $instance_path."/builds";
 $upload_path = $instance_path."/upload";
+$queue_path = $instance_path."/queue";
 ?>
