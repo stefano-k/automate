@@ -116,7 +116,8 @@ if args.create or args.update:
     for dist in config.as_list('dists'):
         for arch in config.as_list('archs'):
     
-            os.makedirs(os.path.join(instance_path, "pbuilder", dist + "-" + arch, "base.cow"))
+            if args.create:
+                os.makedirs(os.path.join(instance_path, "pbuilder", dist + "-" + arch, "base.cow"))
             
             cb = cowbuilder.CowBuilder(dist, arch, pbuilderrc_file, None, None)
             if args.create:
