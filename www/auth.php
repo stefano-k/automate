@@ -2,7 +2,7 @@
 unset($user);
 
 function login($username, $password, $hash) {
-    global $user;
+    global $user, $salt;
     $file = "users/$username.json";
     if(file_exists($file)) {
         $userfile = json_decode(file_get_contents($file), true);

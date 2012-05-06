@@ -16,8 +16,8 @@ echo "<tr><td style='font-weight:bolder;'>Uploader:</td><td>".htmlspecialchars($
 echo "<tr><td style='font-weight:bolder;'>Dists:</td><td>".join(", ", $build['dists'])."</td></tr>";
 echo "<tr><td style='font-weight:bolder;'>Archs:</td><td>".join(", ", $build['archs'])."</td></tr>";
 $files_links = array(
-    "<a href='index.php?page=changes&build=".$build['build_id']."'>changes</a>",
-    "<a href='index.php?page=changes&build=".$build['build_id']."&dsc'>dsc</a>"
+    "<a href='index.php?instance=$instance&page=changes&build=".$build['build_id']."'>changes</a>",
+    "<a href='index.php?instance=$instance&page=changes&build=".$build['build_id']."&dsc'>dsc</a>"
 );
 echo "<tr><td style='font-weight:bolder;'>Files:</td><td>".join(", ", $files_links)."</td></tr>";
 
@@ -47,14 +47,18 @@ if ($all_ok) {
     if ($user['type'] <= USER_DEVELOPER) {
         if (isset($_GET['import'])) {
             if (!file_exists($import_log_file) && !file_exists($import_request_file) && !file_exists($import_ignore_file) && !file_exists($import_error_file)) {
-                file_put_contents($import_request_file, time());
-                echo "(requested inclusion for package ".$build['package']."-".$build['version'].")<br/>";
+                if (file_put_contents($import_request_file, time()))
+                    echo "(requested inclusion for package ".$build['package']."-".$build['version'].")<br/>";
+                else
+                    echo "(error requesting inclusion)<br/>";
             }
         }
         elseif (isset($_GET['ignore'])) {
             if (!file_exists($import_log_file) && !file_exists($import_request_file) && !file_exists($import_ignore_file) && !file_exists($import_error_file)) {
-                file_put_contents($import_ignore_file, time());
-                echo "(ignored inclusion for package ".$build['package']."-".$build['version'].")<br/>";
+                if (file_put_contents($import_ignore_file, time()))
+                    echo "(ignored inclusion for package ".$build['package']."-".$build['version'].")<br/>";
+                else
+                    echo "(error requesting ignore)<br/>";
             }
         }
     }
@@ -73,8 +77,8 @@ if ($all_ok) {
     }
     else {
         if ($user['type'] <= USER_DEVELOPER) {
-            $import_link = "index.php?page=build&amp;build=$build_id&amp;import";
-            $ignore_link = "index.php?page=build&amp;build=$build_id&amp;ignore";
+            $import_link = "index.php?instance=$instance&page=build&amp;build=$build_id&amp;import";
+            $ignore_link = "index.php?instance=$instance&page=build&amp;build=$build_id&amp;ignore";
             echo "- <a href='$import_link'>import to repository</a><br/>";
             echo "- <a href='$ignore_link'>ignore this build</a><br/>";
         }
@@ -95,7 +99,7 @@ echo "<ul>";
 $source_files = glob($builds_path."/".$_GET['build']."/source/*");
 foreach($source_files as $source_file) {
     echo "<li>";
-    echo "<a href='download.php?build=".$_GET['build']."&amp;source=".
+    echo "<a href='download.php?instance=$instance&build=".$_GET['build']."&amp;source=".
         str_replace($builds_path."/".$_GET['build']."/source/", "", $source_file)."'>";
     echo basename($source_file)."</a> <span class='label'>(".size_formatted($source_file).")</span>";
     echo "</li>";
@@ -117,25 +121,25 @@ foreach($build['dists'] as $dist) {
         if (file_exists($res_file)) {
             $res = intval(file_get_contents($res_file));
             if ($res != 0) {
-                echo "<li><a href='index.php?page=rebuild&amp;build=".$build['build_id'].
+                echo "<li><a href='index.php?instance=$instance&page=rebuild&amp;build=".$build['build_id'].
                 "&amp;dist=$dist&amp;arch=$arch'>rebuild</a></li>";
             }
         }
         
         if (file_exists($log_file) || file_exists($update_file))
-            echo "<li><a href='index.php?page=log&amp;build=".$build['build_id'].
+            echo "<li><a href='index.php?instance=$instance&page=log&amp;build=".$build['build_id'].
                 "&amp;dist=$dist&amp;arch=$arch'>build log</a></li>";
         
         $result_files = glob($builds_path."/".$_GET['build']."/result/$dist/$arch/*");
         
         if (count($result_files) > 0) {
-            echo "<li><a href='index.php?page=lintian&amp;build=".$build['build_id'].
+            echo "<li><a href='index.php?instance=$instance&page=lintian&amp;build=".$build['build_id'].
                 "&amp;dist=$dist&amp;arch=$arch'>lintian check</a></li>";
         }
         
         foreach($result_files as $result_file) {
             echo "<li>";
-            echo "<a href='download.php?build=".$_GET['build']."&amp;file=".
+            echo "<a href='download.php?instance=$instance&build=".$_GET['build']."&amp;file=".
                 urlencode(str_replace($builds_path."/".$_GET['build']."/result/", "", $result_file))."'>";
             echo basename($result_file)."</a> <span class='label'>(".size_formatted($result_file).")</span>";
             echo "</li>";

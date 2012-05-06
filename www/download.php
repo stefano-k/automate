@@ -1,6 +1,7 @@
 <?
 include("config.php");
 include("auth.php");
+include("automate.php");
 
 $build_id = $_GET['build'];
 if (isset($_GET['source'])) {
@@ -17,9 +18,10 @@ if (file_exists($filepath)) {
     header("Content-Description: File Transfer");
     if (($extension == "dsc") || ($extension == "changes"))
         header("Content-Type: text/plain");
-    else
+    else {
         header("Content-Type: application/octet-stream");
-    header("Content-Disposition: attachment; filename=\"".basename($filepath)."\"");
+        header("Content-Disposition: attachment; filename=\"".basename($filepath)."\"");
+    }
     //header("Content-Transfer-Encoding: binary");
     //header("Expires: 0");
     //header("Cache-Control: must-revalidate");

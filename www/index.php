@@ -5,19 +5,13 @@
     include("config.php");
     include("functions.php");
     include("auth.php");
+    include("automate.php");
     
     // page
     if (isset($_GET['page']))
         $page = $_GET['page'];
     else
         $page = 'builds';
-    
-    // instance
-    if (isset($_GET['instance']))
-        $instance = $_GET['instance'];
-    else
-        $instante = $instances[0];
-
 ?>
 <head>
     <title>AutoMate [<? echo $page; ?>]</title>
@@ -27,17 +21,29 @@
 </head>
 <body>
     <h1>AutoMate</h1>
-    <p class="menu"><span style="float:right;">automate build daemon web interface
+    <i>instances:</i>
     <?
-    if (isset($user)) {
-        echo " (connected as <strong>".$user['username']."</strong>)";
+    foreach($instances as $minstance) {
+        if ($minstance == $instance) {
+            echo "<strong>$minstance</strong> &nbsp;";
+        }
+        else {
+            echo "<a href='index.php?instance=$minstance'>$minstance</a> &nbsp; ";
+        }
+    }
+    ?>
+    <p class="menu">
+        <span style="float:right;">
+        <?
+        if (isset($user)) {
+            echo "<img src='img/unknown-channel.png'/> ".$user['username']." &nbsp; ";
+            echo "<a href='index.php?logout'>logout</a>";
         ?>
         </span>
-        <a href='index.php?page=builds'>builds</a> &bull;
-        <a href='index.php?page=incoming'>incoming</a> &bull;
-        <a href='index.php?page=repository'>repository</a> &bull;
-        <a href='index.php?page=profile'>profile</a> &bull;
-        <a href='index.php?logout'>logout</a>
+        <a href='index.php?instance=<? echo $instance; ?>&page=builds'>builds</a> &nbsp;
+        <a href='index.php?instance=<? echo $instance; ?>&page=incoming'>incoming</a> &nbsp;
+        <a href='index.php?instance=<? echo $instance; ?>&page=repository'>repository</a> &nbsp;
+        
         <?
     }
     else {

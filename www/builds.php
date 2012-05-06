@@ -64,7 +64,7 @@ foreach ($builds as $build_id) {
     echo "<tr>";
     
     echo "<td style='width:20px;'><img src='img/system-run.png'/></td>";
-    echo "<td>#".sprintf("%03s", $build['build_id'])."</td>";
+    echo "<td style='width:60px;'>#".sprintf("%03s", $build['build_id'])."</td>";
     if (file_exists($import_request_file)) {
         $img = "aptdaemon-wait";
         $img_title = "import requested";
@@ -90,7 +90,7 @@ foreach ($builds as $build_id) {
         $img_title = "running";
     }
         
-    echo "<td><img src='img/$img.png' title='$img_title'/> <a href='index.php?page=build&build=".$build['build_id']."'>".$build['package']."-".$build['version']."</a></td>";
+    echo "<td><img src='img/$img.png' title='$img_title'/> <a href='index.php?instance=$instance&page=build&build=".$build['build_id']."'>".$build['package']."-".$build['version']."</a></td>";
     echo "<td>".$build['timestamp']."</td>";
     //echo "<td>".htmlspecialchars($build['changed_by'])."</td>";
     
@@ -122,7 +122,7 @@ foreach ($builds as $build_id) {
             }
             $all_ok &= $result;
             if (file_exists($log_file) || file_exists($update_file)) {
-                $log_link = "index.php?page=log&amp;build=$build_id&amp;dist=$dist&amp;arch=$arch";
+                $log_link = "index.php?instance=$instance&page=log&amp;build=$build_id&amp;dist=$dist&amp;arch=$arch";
                 echo "<img src='img/$img'/> <a href='$log_link'>$dist/$arch</a> ";
             }
             else
@@ -160,7 +160,7 @@ echo "</table>";
 
 if (!isset($_GET['all'])) {
     if ($i >= $max_results) {
-        echo "<ul><li><a href='index.php?page=builds&amp;search=$search&amp;all'>show all</a></li></ul>";
+        echo "<ul><li><a href='index.php?instance=$instance&page=builds&amp;search=$search&amp;all'>show all</a></li></ul>";
     }
 }
 

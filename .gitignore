@@ -1,0 +1,3 @@
+*.pyc
+www/config.php
+www/users/*.json
