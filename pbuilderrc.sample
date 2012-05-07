@@ -30,7 +30,7 @@ elif $(echo ${UBUNTU_SUITES[@]} | grep -q $DIST); then
     MIRRORSITE="http://$MIRROR/ubuntu/"
     COMPONENTS="main restricted universe multiverse"
     DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--keyring=/usr/share/keyrings/ubuntu-archive-keyring.gpg")
-    OTHERMIRROR="deb $AUTOMATE_WWW_PATH/instances/$INSTANCE//ubuntu/ $DIST main"
+    OTHERMIRROR="deb $AUTOMATE_WWW_PATH/instances/$INSTANCE/ubuntu/ $DIST main"
 else
     echo "Unknown distribution: $DIST"
     exit 1

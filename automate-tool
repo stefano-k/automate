@@ -35,6 +35,7 @@ parser.add_argument("--prepare", action="store_true")
 parser.add_argument("--create", action="store_true")
 parser.add_argument("--update", action="store_true")
 parser.add_argument("--update-pbuilderrc", action="store_true")
+parser.add_argument("--skip-pbuilderrc", action="store_true")
 parser.add_argument("--instance", type=str, default="automate")
 args = parser.parse_args()
 
@@ -72,25 +73,26 @@ if args.prepare:
 
 if args.create or args.update or args.update_pbuilderrc:
     
-    config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
-    
-    variables = {
-        "extrapackages": config['extra_packages'],
-        "mirror": config['mirror'],
-        "automate_path": automate_path,
-        "automate_www_path": config['automate_www_path'],
-        "instance": args.instance
-    }
-    
-    pbuilderrc_content = open("pbuilderrc.sample").read()
-    
-    for key in variables:
+    if not args.skip_pbuilderrc:
+        config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
         
-        pbuilderrc_content = pbuilderrc_content.replace("@" + key + "@", variables[key])
+        variables = {
+            "extrapackages": config['extra_packages'],
+            "mirror": config['mirror'],
+            "automate_path": automate_path,
+            "automate_www_path": config['automate_www_path'],
+            "instance": args.instance
+        }
         
-    pbuilderrc_file = open(os.path.join(instance_path, "pbuilderrc"), "w")
-    pbuilderrc_file.write(pbuilderrc_content)
-    pbuilderrc_file.close()
+        pbuilderrc_content = open("pbuilderrc.sample").read()
+        
+        for key in variables:
+            
+            pbuilderrc_content = pbuilderrc_content.replace("@" + key + "@", variables[key])
+            
+        pbuilderrc_file = open(os.path.join(instance_path, "pbuilderrc"), "w")
+        pbuilderrc_file.write(pbuilderrc_content)
+        pbuilderrc_file.close()
 
 if args.create or args.update:
     
