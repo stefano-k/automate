@@ -25,7 +25,7 @@
     <?
     foreach($instances as $minstance) {
         if ($minstance == $instance) {
-            echo "<strong>$minstance</strong> &nbsp;";
+            echo "<a href='index.php?instance=$minstance'><strong>$minstance</strong></a> &nbsp;";
         }
         else {
             echo "<a href='index.php?instance=$minstance'>$minstance</a> &nbsp; ";

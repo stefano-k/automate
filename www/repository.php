@@ -4,13 +4,15 @@ if (!isset($user))
 
 echo "<h2>repository</h2>";
 
-echo "<table>";
-echo "<tr>";
-echo "<td><strong>package</strong></td>";
-foreach($dists as $dist) {
-    foreach($archs as $arch) {
-        echo "<td><strong>".$dist."/".$arch."</strong></td>";
+$packages = glob($repository_path."/*/pool/main/*/*/*.deb");
+$prevpackage = "";
+foreach($packages as $packagefile) {
+    $package = basename(dirname($packagefile));
+    if ($package != $prevpackage) {
+        echo "<strong>".$package."</strong><br/>";
+        $prevpackage = $package;
     }
+    echo basename($packagefile)."<br/>";
 }
-echo "</tr>";
+
 ?>

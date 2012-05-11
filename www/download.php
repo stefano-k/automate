@@ -15,10 +15,13 @@ else {
 $extension = end(explode(".", $filepath));
 
 if (file_exists($filepath)) {
-    header("Content-Description: File Transfer");
-    if (($extension == "dsc") || ($extension == "changes"))
+    
+    if (($extension == "dsc") || ($extension == "changes")) {
         header("Content-Type: text/plain");
+        header("Content-Disposition: filename=\"".basename($filepath)."\"");
+    }
     else {
+        header("Content-Description: File Transfer");
         header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=\"".basename($filepath)."\"");
     }
