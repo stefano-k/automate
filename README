@@ -1,6 +1,6 @@
 Requirements:
 
-	# sudo apt-get install cowbuilder python-configobj reprepro
+	# sudo apt-get install cowbuilder python-configobj python-argparse reprepro
 
 Create an instance:
 
