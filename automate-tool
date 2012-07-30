@@ -62,7 +62,7 @@ if args.prepare:
         
         os.system("chmod 777 -R %s/" % instance_path)
 
-        print "\nInstance %s prepared"
+        print "\nInstance %s prepared" % args.instance
         print "Edit instances/%s/automate.conf, then execute the command:" % args.instance
         print "\t./automate-tool --create --instance %s" % args.instance
     
