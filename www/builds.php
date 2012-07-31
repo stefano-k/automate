@@ -35,9 +35,9 @@ foreach ($builds as $build_id) {
     $build = json_decode(file_get_contents($build_file), true);
     
     if ($search != "") {
-        if (!startswith($build['package'], $search)) {
+        if (preg_match("/".$search."/", $build['package']) == 0) {
             continue;
-        }
+        } 
     }
     
     $import_log_file = $builds_path."/".$build_id."/import.log";
