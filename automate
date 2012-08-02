@@ -128,7 +128,7 @@ if len(queue_files) > 0:
         orig_changelog_file = open("debian/changelog", "r")
         orig_changelog = orig_changelog_file.read().splitlines()
         orig_changelog[0] = orig_changelog[0].replace(")", "+" + queue_object['dist'] + ")")
-        if queue_object['dist'] in ["oneiric", "precise"]:
+        if queue_object['dist'] in ["oneiric", "precise", "quantal"]:
             orig_changelog[0] = orig_changelog[0].replace("unstable", queue_object['dist'])
         orig_changelog_file.close()
         new_changelog = open("debian/changelog", "w")
