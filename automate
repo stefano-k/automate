@@ -110,8 +110,13 @@ if len(queue_files) > 0:
     
     if config.as_bool("add_suffix"):
         
+        suffix = queue_object['dist']
+                
+        if ("%s_suffix" % suffix) in config:
+            suffix = config["%s_suffix" % suffix]
+        
         distarch_source_dir = os.path.join(queue_object['source_dir'], "../tmp", \
-            queue_object['dist'] + "-" + queue_object['arch'])
+            suffix + "-" + queue_object['arch'])
         os.makedirs(distarch_source_dir)
 
         os.system("cp %(src)s %(dst)s" % \
@@ -127,9 +132,9 @@ if len(queue_files) > 0:
         # adapt the changelog version for the selected distro name
         orig_changelog_file = open("debian/changelog", "r")
         orig_changelog = orig_changelog_file.read().splitlines()
-        orig_changelog[0] = orig_changelog[0].replace(")", "+" + queue_object['dist'] + ")")
+        orig_changelog[0] = orig_changelog[0].replace(")", "+" + suffix + ")")
         if queue_object['dist'] in ["oneiric", "precise"]:
-            orig_changelog[0] = orig_changelog[0].replace("unstable", queue_object['dist'])
+            orig_changelog[0] = orig_changelog[0].replace("unstable", suffix)
         orig_changelog_file.close()
         new_changelog = open("debian/changelog", "w")
         new_changelog.write("\n".join(orig_changelog))
@@ -138,7 +143,7 @@ if len(queue_files) > 0:
         functions.command_result("debuild -S -sa -uc -us", False)
         os.chdir(automate_path)
         
-        dsc = glob.glob(os.path.join(distarch_source_dir, "*" + queue_object['dist'] + ".dsc"))[0]
+        dsc = glob.glob(os.path.join(distarch_source_dir, "*" + suffix + ".dsc"))[0]
     else:
         dsc = glob.glob(os.path.join(queue_object['source_dir'], "*.dsc"))[0]
     
