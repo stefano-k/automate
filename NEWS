@@ -1,0 +1,4 @@
+0.1.1 (2012-08-28):
+    add "gpg_check" option in instances automate.conf (availables values
+    are yes and no) to avoid gpg check in incoming (be sure your upload
+    folder is protected in another way!)
