@@ -43,10 +43,10 @@ class Incoming:
         for changes_file in glob.glob(os.path.join(self.incoming_path, "*.changes")):
             
             # check gpg key
-            if self.config.as_bool("gpg_check"):
-                gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)
-            else:
-                gpg_res = 0
+            gpg_res = 0
+            if "gpg_check" in config:
+                if self.config.as_bool("gpg_check"):
+                    gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)                
             
             if gpg_res == 0:
                 
