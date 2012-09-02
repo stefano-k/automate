@@ -44,9 +44,12 @@ class Incoming:
             
             # check gpg key
             gpg_res = 0
-            if "gpg_check" in config:
+            if "gpg_check" in self.config:
                 if self.config.as_bool("gpg_check"):
-                    gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)                
+                    gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)
+            else:
+                # default gpg check is true
+                gpg_res = functions.command_result("gpgv %(changes)s" % {"changes": changes_file}, output=False)
             
             if gpg_res == 0:
                 
