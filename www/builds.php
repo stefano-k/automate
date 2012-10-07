@@ -91,7 +91,7 @@ foreach ($builds as $build_id) {
     }
         
     echo "<td style='width:330px;'><img src='img/$img.png' title='$img_title'/> <a href='index.php?instance=$instance&page=build&build=".$build['build_id']."'>".$build['package']."-".$build['version']."</a></td>";
-    echo "<td style='width:150px;'>".$build['timestamp']."</td>";
+    echo "<td style='width:90px;'><span style='font-size:0.6em;'>".$build['timestamp']."</span></td>";
     //echo "<td>".htmlspecialchars($build['changed_by'])."</td>";
     
     echo "<td>";
@@ -123,10 +123,10 @@ foreach ($builds as $build_id) {
             $all_ok &= $result;
             if (file_exists($log_file) || file_exists($update_file)) {
                 $log_link = "index.php?instance=$instance&page=log&amp;build=$build_id&amp;dist=$dist&amp;arch=$arch";
-                echo "<img src='img/$img'/> <a href='$log_link'>$dist/$arch</a> ";
+                echo "<img src='img/$img'/> <a href='$log_link'><span style='font-size:0.7em;'>$dist/$arch</span></a> ";
             }
             else
-                echo "<img src='img/$img'/> $dist/$arch ";
+                echo "<img src='img/$img'/> <span style='font-size:0.7em;'>$dist/$arch</span> ";
         }
     }
     echo "</td>";

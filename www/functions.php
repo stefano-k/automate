@@ -36,4 +36,18 @@ function package_from_name($packagename, $packages) {
             return $package;
 }
 
+function icon($icon) {
+    return "<img src='img/".$icon.".png'>";
+}
+
+function icon_from_file($file) {
+    $path_parts = pathinfo($file);
+    $extension = $path_parts['extension'];
+    $icon = "ext/".$extension;
+    if (file_exists("img/".$icon.".png"))
+        return icon($icon);
+    else
+        return icon("ext/unknown");
+}
+
 ?>

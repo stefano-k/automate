@@ -90,29 +90,30 @@ else {
     
 echo "</td></tr>";
 
-echo "</table>";
+echo "</table>\n";
 
 // SOURCE
-echo "<br/>";
-echo "<h2>source</h2>";
-echo "<ul>";
+echo "<br/>\n";
+echo "<h2>source</h2>\n";
+echo "<ul>\n";
 $source_files = glob($builds_path."/".$_GET['build']."/source/*");
 foreach($source_files as $source_file) {
     echo "<li>";
-    echo "<a href='download.php?instance=$instance&build=".$_GET['build']."&amp;source=".
+    echo icon_from_file($source_file);
+    echo " <a href='download.php?instance=$instance&build=".$_GET['build']."&amp;source=".
         str_replace($builds_path."/".$_GET['build']."/source/", "", $source_file)."'>";
     echo basename($source_file)."</a> <span class='label'>(".size_formatted($source_file).")</span>";
-    echo "</li>";
+    echo "</li>\n";
 }
-echo "</ul>";
+echo "</ul>\n";
 
 // BUILD RESULTS
 foreach($build['dists'] as $dist) {
     foreach($build['archs'] as $arch) {
         
-        echo "<h2>$dist/$arch</h2>";
+        echo "<h2>$dist/$arch</h2>\n";
         
-        echo "<ul>";
+        echo "<ul>\n";
         
         $log_file = $builds_path."/".$build['build_id']."/log/".$dist."_".$arch.".log";
         $update_file = $log_file.".update";
@@ -122,30 +123,30 @@ foreach($build['dists'] as $dist) {
             $res = intval(file_get_contents($res_file));
             if ($res != 0) {
                 echo "<li><a href='index.php?instance=$instance&page=rebuild&amp;build=".$build['build_id'].
-                "&amp;dist=$dist&amp;arch=$arch'>rebuild</a></li>";
+                "&amp;dist=$dist&amp;arch=$arch'>rebuild</a></li>\n";
             }
         }
         
         if (file_exists($log_file) || file_exists($update_file))
             echo "<li><a href='index.php?instance=$instance&page=log&amp;build=".$build['build_id'].
-                "&amp;dist=$dist&amp;arch=$arch'>build log</a></li>";
+                "&amp;dist=$dist&amp;arch=$arch'>build log</a></li>\n";
         
         $result_files = glob($builds_path."/".$_GET['build']."/result/$dist/$arch/*");
         
         if (count($result_files) > 0) {
             echo "<li><a href='index.php?instance=$instance&page=lintian&amp;build=".$build['build_id'].
-                "&amp;dist=$dist&amp;arch=$arch'>lintian check</a></li>";
+                "&amp;dist=$dist&amp;arch=$arch'>lintian check</a></li>\n";
         }
         
         foreach($result_files as $result_file) {
             echo "<li>";
-            echo "<a href='download.php?instance=$instance&build=".$_GET['build']."&amp;file=".
+            echo icon_from_file($result_file);
+            echo " <a href='download.php?instance=$instance&build=".$_GET['build']."&amp;file=".
                 urlencode(str_replace($builds_path."/".$_GET['build']."/result/", "", $result_file))."'>";
             echo basename($result_file)."</a> <span class='label'>(".size_formatted($result_file).")</span>";
-            echo "</li>";
+            echo "</li>\n";
         }
-        echo "</ul>";
-        
+        echo "</ul>\n";
     }
 }
 
