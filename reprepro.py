@@ -16,6 +16,7 @@
 # along with AutoMate.  If not, see <http://www.gnu.org/licenses/>.
 
 import functions
+import glob
 import os
 
 class Reprepro():
@@ -26,6 +27,11 @@ class Reprepro():
         self.dist = dist
         self.archs = archs
         self.name = functions.distro_name(dist)
+
+    def config_exists(self):
+        reprepro_path = os.path.join(self.instance_path, "repository", self.name)
+        reprepro_path_conf_file = os.path.join(reprepro_path, "db", "packages.db")
+        return os.path.exists(reprepro_path_conf_file)
 
     def create_config(self):
         
@@ -66,21 +72,25 @@ class Reprepro():
             })
         
         # add architecture "all" packages from first arch
-        os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
-            {
-                "basedir": reprepro_path,
-                "dist": self.dist,
-                "deb": os.path.join(build_dir, "result", self.dist, self.archs[0], "*all.deb"),
-                "logfile": import_log_file
-            })
+        all_debs = os.path.join(build_dir, "result", self.dist, self.archs[0], "*all.deb")
+        if len(glob.glob(all_debs)) > 0:
+            os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
+                {
+                    "basedir": reprepro_path,
+                    "dist": self.dist,
+                    "deb": all_debs,
+                    "logfile": import_log_file
+                })
         
         # add other arch-specific packages
         for arch in self.archs:
-            os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
-            {
-                "basedir": reprepro_path,
-                "dist": self.dist,
-                "deb": os.path.join(build_dir, "result", self.dist, arch, "*" + arch + ".deb"),
-                "logfile": import_log_file
-            })
+            arch_debs = os.path.join(build_dir, "result", self.dist, arch, "*" + arch + ".deb")
+            if len(glob.glob(arch_debs)) > 0:
+                os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
+                {
+                    "basedir": reprepro_path,
+                    "dist": self.dist,
+                    "deb": arch_debs,
+                    "logfile": import_log_file
+                })
 

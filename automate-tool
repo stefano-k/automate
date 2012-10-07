@@ -33,6 +33,8 @@ functions.check_root()
 parser = argparse.ArgumentParser()
 parser.add_argument("--prepare", action="store_true")
 parser.add_argument("--create", action="store_true")
+# atm, you need to create reprepro config and run export manually!
+parser.add_argument("--create-new", action="store_true", help="create cowbuilder images only for new dists")
 parser.add_argument("--update", action="store_true")
 parser.add_argument("--update-pbuilderrc", action="store_true")
 parser.add_argument("--skip-pbuilderrc", action="store_true")
@@ -71,9 +73,10 @@ if args.prepare:
         print "E: %s instance already exists!" % args.instance
         sys.exit(1)
 
-if args.create or args.update or args.update_pbuilderrc:
+if args.create or args.create_new or args.update or args.update_pbuilderrc:
     
-    if not args.skip_pbuilderrc:
+    if not args.skip_pbuilderrc and not args.create_new:
+        
         config = configobj.ConfigObj(os.path.join(instance_path, "automate.conf"))
         
         variables = {
@@ -94,7 +97,7 @@ if args.create or args.update or args.update_pbuilderrc:
         pbuilderrc_file.write(pbuilderrc_content)
         pbuilderrc_file.close()
 
-if args.create or args.update:
+if args.create or args.update or args.create_new:
     
     if not os.path.exists("/usr/sbin/cowbuilder"):
         print "E: install cowbuilder package first!"
@@ -112,18 +115,25 @@ if args.create or args.update:
         for dist in config.as_list('dists'):
             
             rp = reprepro.Reprepro(instance_path, dist, config.as_list('archs'))
-            rp.create_config()
+            if not rp.config_exists():
+                rp.create_config()
     
     # cowbuilder
     for dist in config.as_list('dists'):
         for arch in config.as_list('archs'):
     
-            if args.create:
-                os.makedirs(os.path.join(instance_path, "pbuilder", dist + "-" + arch, "base.cow"))
+            if args.create or args.create_new:
+                base_cow_path = os.path.join(instance_path, "pbuilder", dist + "-" + arch, "base.cow")
+                base_cow_exists = os.path.exists(base_cow_path)
+                if not base_cow_exists:
+                    os.makedirs(base_cow_path)
             
             cb = cowbuilder.CowBuilder(dist, arch, pbuilderrc_file, None, None)
             if args.create:
                 ret = cb.create(True)
+            elif args.create_new:
+                if not base_cow_exists:
+                    ret = cb.create(True)
             elif args.update:
                 ret = cb.update(True)
     
