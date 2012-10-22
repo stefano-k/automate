@@ -14,6 +14,7 @@ else {
 }
 
 echo "<form method='get' action='index.php'>";
+echo "<input type='hidden' name='instance' value='".$instance."'/>";
 echo "<input type='hidden' name='page' value='builds'/>";
 echo "<input type='text' name='search' value='".$search."'/> ";
 echo "<button type='submit'>search</button>";
