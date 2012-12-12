@@ -2,25 +2,28 @@
 if (!isset($user))
     die();
 
-echo "<h2>builds</h2>\n";
-
 if (isset($_GET['search'])) {
     $search = $_GET['search'];
     $max_results = 50;
 }
 else {
     $search = "";
-    $max_results = 20;
+    $max_results = 12;
 }
 
-echo "<form method='get' action='index.php'>";
+echo "<p>";
+echo "<form method='get' action='index.php' style='display:inline;'>";
 echo "<input type='hidden' name='instance' value='".$instance."'/>";
 echo "<input type='hidden' name='page' value='builds'/>";
-echo "<input type='text' name='search' value='".$search."'/> ";
-echo "<button type='submit'>search</button>";
-echo "</form><br/>";
+echo "<input class='input-medium search-query' type='text' name='search' value='".$search."' style='width:300px;'/> ";
+echo "<button class='btn' type='submit'>search</button>&nbsp;";
+echo "</form>\n";
+if (!isset($_GET['all'])) {
+    echo "<button class='btn' onclick=\"location.href='index.php?instance=$instance&page=builds&amp;search=$search&amp;all'\">show all builds</button>";
+}
+echo "</p>";
 
-echo "<table style='width:100%;'>";
+echo "<table style='width:100%;' class='table table-condensed'>";
 
 $i = 0;
 $builds_folders = glob($builds_path."/*");
@@ -61,11 +64,10 @@ foreach ($builds as $build_id) {
             }
         }
     }
-    
-    echo "<tr>";
-    
-    echo "<td style='width:20px;'><img src='img/system-run.png'/></td>";
-    echo "<td style='width:60px;'>#".sprintf("%03s", $build['build_id'])."</td>";
+
+    echo "<tr id='tr-build-".$build_id."'>";
+
+    echo "<td style='width:43px;'><span class='badge badge-inverse'>".sprintf("%03s", $build['build_id'])."</span></td>";
     if (file_exists($import_request_file)) {
         $img = "aptdaemon-wait";
         $img_title = "import requested";
@@ -91,9 +93,12 @@ foreach ($builds as $build_id) {
         $img_title = "running";
     }
         
-    echo "<td style='width:330px;'><img src='img/$img.png' title='$img_title'/> <a href='index.php?instance=$instance&page=build&build=".$build['build_id']."'>".$build['package']."-".$build['version']."</a></td>";
+    echo "<td style='width:350px;'>";
+        echo "<img src='img/$img.png' title='$img_title'/>&nbsp;";
+        echo "<a title='".htmlspecialchars($build['changed_by'])."' href='index.php?instance=$instance&page=build&build=".
+            $build['build_id']."'>".$build['package']."-".$build['version']."</a>";
+    echo "</td>";
     echo "<td style='width:90px;'><span style='font-size:0.6em;'>".$build['timestamp']."</span></td>";
-    //echo "<td>".htmlspecialchars($build['changed_by'])."</td>";
     
     echo "<td>";
     $all_ok = true;
@@ -105,29 +110,32 @@ foreach ($builds as $build_id) {
             $update_file = $log_file.".update";
             if (!file_exists($res_file)) {
                 if (!file_exists($log_file) && !file_exists($update_file)) {
-                    $img = "visualization.png";
+                    $label = "info";
                 }
                 else {
-                    $img = "load.gif";
+                    $label = "warning";
                 }
             }
             else {
                 $res = intval(file_get_contents($res_file));
                 if ($res == 0) {
-                    $img = "gtk-yes.png";
+                    $label = "success";
                     $result = true;
                 }
                 else {
-                    $img = "gtk-no.png";
+                    $label = "important";
                 }
             }
             $all_ok &= $result;
             if (file_exists($log_file) || file_exists($update_file)) {
                 $log_link = "index.php?instance=$instance&page=log&amp;build=$build_id&amp;dist=$dist&amp;arch=$arch";
-                echo "<img src='img/$img'/> <a href='$log_link'><span style='font-size:0.7em;'>$dist/$arch</span></a> ";
+                echo "<span class='label label-$label'
+                            onclick=\"window.open('$log_link');\"
+                            style='cursor:pointer;'
+                            title='open build log'>$dist/$arch</span> ";
             }
             else
-                echo "<img src='img/$img'/> <span style='font-size:0.7em;'>$dist/$arch</span> ";
+                echo "<span class='label label-$label'>$dist/$arch</span> ";
         }
     }
     echo "</td>";
@@ -140,7 +148,7 @@ foreach ($builds as $build_id) {
         $import_error_file = $builds_path."/".$build_id."/import.error";
         if (!file_exists($import_request_file) && !file_exists($import_ignore_file) 
                 && !file_exists($import_log_file) && !file_exists($import_error_file)) {
-            echo "<img src='img/system-run.png'/>";
+            echo "<script>$('#tr-build-".$build_id."').addClass('success');</script>";
         }
     }
     echo "</td>";
@@ -159,11 +167,12 @@ foreach ($builds as $build_id) {
 }
 echo "</table>";
 
-if (!isset($_GET['all'])) {
-    if ($i >= $max_results) {
-        echo "<ul><li><a href='index.php?instance=$instance&page=builds&amp;search=$search&amp;all'>show all</a></li></ul>";
-    }
-}
-
-echo "<br/><br/>";
 ?>
+<p></p>
+<div class="well well-small">
+    <strong>Legend:</strong>
+    <span class="label label-success">Success</span>
+    <span class="label label-important">Error</span>
+    <span class="label label-warning">Building</span>
+    <span class="label label-info">Queued</span>
+</div>

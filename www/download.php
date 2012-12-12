@@ -16,19 +16,19 @@ $extension = end(explode(".", $filepath));
 
 if (file_exists($filepath)) {
     
-    if (($extension == "dsc") || ($extension == "changes")) {
+    // open text files in browser instead of download them
+    if (in_array($extension, array("dsc", "changes"))) {
         header("Content-Type: text/plain");
         header("Content-Disposition: filename=\"".basename($filepath)."\"");
     }
     else {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $filepath);
+        finfo_close($finfo);
         header("Content-Description: File Transfer");
-        header("Content-Type: application/octet-stream");
+        header("Content-Type: ".$mime); //application/octet-stream
         header("Content-Disposition: attachment; filename=\"".basename($filepath)."\"");
     }
-    //header("Content-Transfer-Encoding: binary");
-    //header("Expires: 0");
-    //header("Cache-Control: must-revalidate");
-    //header("Pragma: public");
     header("Content-Length: " . filesize($filepath));
     ob_clean();
     flush();

@@ -15,12 +15,12 @@ $changes_file = $changes_file[0];
 
 if (file_exists($changes_file)) {
     
-    echo "<h2>".basename($changes_file)."</h2>";
+    echo "<h4>".basename($changes_file)."</h4>";
     flush();
     
     $rows = file($changes_file);
 
-    echo "<pre>";
+    echo "<pre class='pre-scrollable'>";
     foreach ($rows as $row) {
         echo $row;
         flush();

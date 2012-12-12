@@ -1,50 +1,22 @@
 body {
-    font-size: 0.8em;
+    margin: 10px;
 }
 
-h1 {
-    font-size: 1.1em;
-}
-h2 {
-    font-size: 1.0em;
-}
-a {
-    color: #000000;
-}
-span.label {
-    color: #A5A5A5;
-}
-span.info {
-    background-color: #D4E3E8;
-    color: #173F66;
-}
-span.error {
-    background-color: #F9DDDD;
-    color: #A52A2A;
-}
-span.link {
-    cursor: pointer;
-    border-bottom: 1px dotted #4D4D4D;
-}
-a:hover, span.link:hover {
-    color: #4D4D4D;
-}
-p.menu {
-    width:99%;
-    padding: 3px;
-    background-color: #E5E5E5;
-    border-bottom: 1px solid #7F7F7F;
-}
-p.menu a {
-    text-decoration: none;
-}
 img {
     vertical-align: middle;
 }
-button {
-    border:1px solid #000000;
-    background-color:#E1E1E1;
+
+/* bootstrap overrides */
+div.navbar {
+    margin-bottom: 5px;
+    line-height: 10px;
 }
-.disabled {
-    opacity: 0.5;
+div.navbar-inner {
+    min-height: 20px;
+}
+div.navbar li {
+    line-height: 10px;
+}
+span.label {
+    font-size: 10px;
 }

@@ -2,7 +2,7 @@
 if (!isset($user))
     die();
 ?>
-<table cellspacing=10 cellpadding=10>
+<table class="table table-condensed">
 <tr>
 
 <?
@@ -14,9 +14,9 @@ foreach($distributions as $distribution) {
     if (file_exists($repository_path."/".$distribution."/")) {
 
         echo "<td>";
-        echo "<h1>".$distribution."</h1>";
+        echo "<h5>".$distribution."</h5>";
 
-        echo "<table cellpadding='2'>";
+        echo "<table class='table table-condensed'>";
         
         $packages = glob($repository_path."/".$distribution."/pool/main/*/*/*.deb");
         $prevpackage = "";
@@ -24,7 +24,7 @@ foreach($distributions as $distribution) {
             $package = basename(dirname($packagefile));
             if ($package != $prevpackage) {
                 $prevpackage = $package;
-                echo "<tr><td colspan='2'><hr></td></tr>";
+                echo "<tr><td colspan='2' style='vertical-align:top;'></td></tr>";
             }
             else {
                 $package = "";

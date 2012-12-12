@@ -15,54 +15,69 @@
 ?>
 <head>
     <title>AutoMate [<? echo $page; ?>]</title>
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="style.css" type="text/css"/>
     <link rel="shortcut icon" href="favicon.ico"/>
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h1>AutoMate</h1>
-    <i>instances:</i>
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <a class="brand" href="index.php">automate</a>
+            <?
+            if (isset($user)) {
+                ?>
+                <ul class="nav">
+                    <li><a><? echo $user['username']; ?></a></li>
+                    <li><a href="index.php?logout">Logout</a></li>
+                </ul>
+                <?
+            }
+            ?>
+        </div>
+    </div>
+    <div class="btn-group">
     <?
+    $items = array("builds", "incoming", "repository");
+    if (in_array($page, $items))
+        $mpage = $page;
+    else
+        $mpage = "builds";
     foreach($instances as $minstance) {
+        $btnclasses = array("btn");
         if ($minstance == $instance) {
-            echo "<a href='index.php?instance=$minstance'><strong>$minstance</strong></a> &nbsp;";
+            $btnclasses[] = "btn-primary";
         }
-        else {
-            echo "<a href='index.php?instance=$minstance'>$minstance</a> &nbsp; ";
-        }
+        echo "<button onclick=\"location.href='index.php?instance=".$minstance."&amp;page=".$mpage."';\" class='".implode(" ", $btnclasses)."'>".$minstance."</button>\n";
     }
     ?>
-    <p class="menu">
-        <span style="float:right;">
-        <?
-        if (isset($user)) {
-            echo "<img src='img/unknown-channel.png'/> ".$user['username']." &nbsp; ";
-            echo "<a href='index.php?logout'>logout</a>";
-        ?>
-        </span>
-        <a href='index.php?instance=<? echo $instance; ?>&page=builds'>builds</a> &nbsp;
-        <a href='index.php?instance=<? echo $instance; ?>&page=incoming'>incoming</a> &nbsp;
-        <a href='index.php?instance=<? echo $instance; ?>&page=repository'>repository</a> &nbsp;
-        
-        <?
-    }
-    else {
-        ?></span>&nbsp;<?
-    }
-    ?>
-    </p>
-    
+    </div>
+    <div class="btn-group">
     <?
+    
+    foreach($items as $item) {
+        $btnclasses = array("btn");
+        if ($item == $page)
+            $btnclasses[] = "btn-primary";
+        echo "<button onclick=\"location.href='index.php?instance=".$instance."&amp;page=".$item."';\" class='".implode(" ", $btnclasses)."'>".$item."</button>\n";
+    }
+    echo "</div>";
+    echo "<br/>";
+
     if (!isset($user)) {
         ?>
-        <div style="padding:5px; border:1px solid #4D4D4D;">
+        <div class="well">
+        <div class="alert alert-info">
+        Login required to use <strong>automate</strong>!
+        </div>
         <form method="post" action="index.php">
         username<br/>
         <input type="text" style="width:150px;" name="username"><br/>
         password<br/>
         <input type="password" style="width:150px;" name="password"><br/>
         <br/>
-        <button type="submit" style="width:150px;">login</button>
+        <button class="btn btn-info" type="submit" style="width:160px;">login</button>
         </form>
         <?
         if (isset($loginerror))
@@ -73,7 +88,8 @@
         <?
     }
     else {
-
+        // breadcrumbs
+        include("breadcrumbs.php");
         // page
         if (file_exists($page.".php"))
             include($page.".php");
