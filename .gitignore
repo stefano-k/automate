@@ -1,4 +1,7 @@
 *.pyc
+instances/
+keys/
+export
 www/config.php
 www/users/*.json
 www/instances/*
