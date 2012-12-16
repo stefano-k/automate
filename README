@@ -1,3 +1,12 @@
+AutoMate
+--------
+
+	AutoMate is a tool to build packages for Debian and Ubuntu distributions.
+
+	It supports dput, builds packages with cowbuilder and manages repository with reprepro.
+
+	A running instance is http://automate.mate-desktop.org.
+
 Requirements
 ------------
 
