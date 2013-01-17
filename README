@@ -10,7 +10,7 @@ AutoMate
 Requirements
 ------------
 
-	# sudo apt-get install cowbuilder python-configobj python-argparse python-debian reprepro
+	# sudo apt-get install cowbuilder python-configobj python-argparse python-debian reprepro --no-install-recommends
 
 	install .debs for archive keyrings:
 	
