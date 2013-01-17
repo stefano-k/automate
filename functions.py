@@ -55,7 +55,7 @@ def json_save(json_object, json_file):
 def distro_name(distro_codename):
     if distro_codename in ["wheezy", "squeeze"]:
         return "debian"
-    elif distro_codename in ["quantal", "precise", "oneiric", "natty", "maverick", "lucid", "karmic", "jaunty", "hardy"]:
+    elif distro_codename in ["raring", "quantal", "precise", "oneiric", "natty", "maverick", "lucid", "karmic", "jaunty", "hardy"]:
         return "ubuntu"
     else:
         print "E: unknown distro name (%s)!" % distro_codename
