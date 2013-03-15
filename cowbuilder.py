@@ -53,6 +53,7 @@ class CowBuilder():
         command.extend(["--configfile", self.configfile])
         command.extend(["--logfile", self.logfile])
         command.extend(["--buildresult", self.buildresult])
+        command.extend(["--debbuildopts", "-Zxz"])
         
         return self.execute(command, output)
 
