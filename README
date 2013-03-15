@@ -5,14 +5,16 @@ AutoMate
 
 	It supports dput, builds packages with cowbuilder and manages repository with reprepro.
 
-	A running instance is http://automate.mate-desktop.org.
+	Running instances:
+          * http://automate.mate-desktop.org (MATE Desktop)
+          * http://build.linuxmint.com/automate/www/ (LinuxMint)
 
 Requirements
 ------------
 
 	# sudo apt-get install cowbuilder python-configobj python-argparse python-debian reprepro --no-install-recommends
 
-	install .debs for archive keyrings:
+	Install .debs for archive keyrings:
 	
 	# wget http://ftp.de.debian.org/debian/pool/main/d/debian-archive-keyring/debian-archive-keyring_2012.4_all.deb
 	# wget http://ie.archive.ubuntu.com/ubuntu/pool/main/u/ubuntu-keyring/ubuntu-keyring_2012.05.19_all.deb
@@ -23,10 +25,10 @@ Create an instance
 
 	# sudo ./automate-tool --instance test --prepare
 
-	edit configuration file (instances/test/automate.conf)
+	Edit configuration file (instances/test/automate.conf)
 
 	# sudo ./automate-tool --instance test --create
 
-	set up your FTP server with anonymous upload to instances/test/upload
+	Set up your FTP server with anonymous upload to instances/test/upload
 
-	create a cron job in /etc/cron.d/ (see cron.sample)
+	Create a cron job in /etc/cron.d/ (see cron.sample)
