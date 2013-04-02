@@ -7,7 +7,7 @@ if (!isset($user))
 
 <?
 
-include 'functions.php';
+require_once("functions.php");
 cleanParams();
 
 

@@ -1,5 +1,5 @@
 <?
-include 'functions.php';
+require_once("functions.php");
 cleanParams();
 
 
