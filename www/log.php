@@ -2,6 +2,10 @@
 if (!isset($user))
     die();
 
+include 'functions.php';
+cleanParams();
+
+
 $build_file = $builds_path."/".$_GET['build']."/build.json";
 $build = json_decode(file_get_contents($build_file), true);
 
@@ -10,7 +14,7 @@ $res_file = $builds_path."/".$_GET['build']."/log/".$_GET['dist']."_".$_GET['arc
 $update_file = $log_file.".update";
 
 if (file_exists($log_file) || file_exists($update_file)) {
-    
+
     function nice_row($row) {
         $row = htmlspecialchars ($row);
         $replaces = array(
@@ -22,7 +26,7 @@ if (file_exists($log_file) || file_exists($update_file)) {
             $row = str_ireplace($search, $replace, $row);
         return $row;
     }
-    
+
     $is_building = !file_exists($res_file);
     ?>
     <script type="text/javascript">
@@ -43,7 +47,7 @@ if (file_exists($log_file) || file_exists($update_file)) {
     echo "<p><button onclick='log_scroll(\"start\");' class='btn btn-mini'>jump to start</button> ";
     echo "<button onclick='log_scroll(\"end\");' class='btn btn-mini'>jump to end</button></p>";
     flush();
-    
+
     echo "<pre id='pre-log' class='pre-scrollable'>";
     if (file_exists($update_file)) {
         $rows = file($update_file);
@@ -52,7 +56,7 @@ if (file_exists($log_file) || file_exists($update_file)) {
             flush();
         }
     }
-    
+
     if (file_exists($log_file)) {
         $rows = file($log_file);
         foreach ($rows as $row) {
@@ -64,7 +68,7 @@ if (file_exists($log_file) || file_exists($update_file)) {
     if ($is_building) {
         echo "<div class='well well-small'><img src='img/load.gif'/> running build, automatic refresh enabled</div>";
     }
-    
+
     if ($is_building) {
         $log_link = "index.php?instance=$instance&page=log&build=".$_GET['build']."&dist=".$_GET['dist']."&arch=".$_GET['arch'];
         ?>

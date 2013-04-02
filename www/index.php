@@ -1,12 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <?
+	include 'functions.php';
+	cleanParams();
+
     include("common.php");
     include("config.php");
     include("functions.php");
     include("auth.php");
     include("automate.php");
-    
+
+
     // page
     if (isset($_GET['page']))
         $page = $_GET['page'];
@@ -55,7 +59,7 @@
     </div>
     <div class="btn-group">
     <?
-    
+
     foreach($items as $item) {
         $btnclasses = array("btn");
         if ($item == $page)

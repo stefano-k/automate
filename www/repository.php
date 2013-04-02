@@ -7,17 +7,21 @@ if (!isset($user))
 
 <?
 
+include 'functions.php';
+cleanParams();
+
+
 $distributions = array("debian", "ubuntu");
 
 foreach($distributions as $distribution) {
-    
+
     if (file_exists($repository_path."/".$distribution."/")) {
 
         echo "<td>";
         echo "<h5>".$distribution."</h5>";
 
         echo "<table class='table table-condensed'>";
-        
+
         $packages = glob($repository_path."/".$distribution."/pool/main/*/*/*.deb");
         $prevpackage = "";
         foreach($packages as $packagefile) {

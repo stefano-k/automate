@@ -1,4 +1,8 @@
 <?
+
+include 'functions.php';
+cleanParams();
+
 unset($user);
 
 function login($username, $password, $hash) {

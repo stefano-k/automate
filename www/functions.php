@@ -1,5 +1,48 @@
 <?
 
+/**
+ * Clean all $_GET and $_POST params
+ * so they can be used in all other parts
+ * of the script.
+ *
+ * @param	void
+ * @return	void
+ */
+function cleanParams()
+{
+	// define your tmp variables
+	$arrGet = array();
+	$arrPost = array();
+
+	// get all values in $_GET
+	foreach ((array) array_keys($_GET) as $v)
+	{
+		// clean the values
+		$arrGet[htmlspecialchars($v)] = filter_input(INPUT_GET, $v, FILTER_SANITIZE_SPECIAL_CHARS|FILTER_SANITIZE_ENCODED);
+	}
+
+
+	// get all values in $_POST
+	foreach ((array) array_keys($_GET) as $v)
+	{
+		// clean the values
+		$arrPost[htmlspecialchars($v)] = filter_input(INPUT_POST, $v, FILTER_SANITIZE_SPECIAL_CHARS|FILTER_SANITIZE_ENCODED);
+	}
+
+
+	// clean the arrays and write the clean values back
+	$_GET = array();
+	$_POST = array();
+
+	$_GET = $arrGet;
+	$_POST = $arrPost;
+
+
+	// cleanup
+	unset($arrGet, $arrPost);
+}
+
+
 function size_formatted($file) {
     if (file_exists($file)) {
         $size = filesize($file);

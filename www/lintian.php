@@ -1,4 +1,9 @@
 <?
+
+include 'functions.php';
+cleanParams();
+
+
 $build_id = $_GET['build'];
 $dist = $_GET['dist'];
 $arch = $_GET['arch'];
@@ -12,7 +17,7 @@ foreach($files as $file) {
     exec("lintian -I -E -i --pedantic --show-overrides $file", $output);
     foreach($output as $row) {
         $row = str_replace(array("  ", "<p>", "</p>"), array("&nbsp;&nbsp;", "", ""), $row);
-        
+
         if ($row[0] == "E")
             echo "<span class='label label-important'>$row</span>";
         elseif ($row[0] == "W")
@@ -25,7 +30,7 @@ foreach($files as $file) {
             echo "<span class='label label-inverse'>$row</span>";
         elseif ($row != "N:")
             echo str_replace("N:&nbsp;&nbsp;&nbsp;&nbsp;", "", $row);
-        
+
         echo "<br/>\n";
     }
     flush();

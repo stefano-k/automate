@@ -1,4 +1,9 @@
 <?
+
+include 'functions.php';
+cleanParams();
+
+
 if (isset($_GET['instance']))
     $instance = $_GET['instance'];
 else

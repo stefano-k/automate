@@ -1,6 +1,9 @@
 <?
 include ("../common.php");
 include ("../config.php");
+include ("../functions.php");
+
+cleanParams();
 
 function create_user($username, $password, $type) {
     global $salt;

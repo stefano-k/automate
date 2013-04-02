@@ -3,6 +3,10 @@
 # to make them available as http:// under cowbuilder
 
 require ("../config.php");
+require ("../functions.php");
+
+cleanParams();
+
 
 foreach($instances as $instance) {
     $instance_path = $automate_path."/instances/".$instance;

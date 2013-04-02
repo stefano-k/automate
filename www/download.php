@@ -1,4 +1,8 @@
 <?
+include 'functions.php';
+cleanParams();
+
+
 include("config.php");
 include("auth.php");
 include("automate.php");
@@ -15,7 +19,7 @@ else {
 $extension = end(explode(".", $filepath));
 
 if (file_exists($filepath)) {
-    
+
     // open text files in browser instead of download them
     if (in_array($extension, array("dsc", "changes"))) {
         header("Content-Type: text/plain");

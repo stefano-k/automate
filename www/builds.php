@@ -2,6 +2,10 @@
 if (!isset($user))
     die();
 
+include 'functions.php';
+cleanParams();
+
+
 if (isset($_GET['search'])) {
     $search = $_GET['search'];
     $max_results = 50;
@@ -34,21 +38,21 @@ natsort($builds);
 $builds = array_reverse($builds);
 
 foreach ($builds as $build_id) {
-    
+
     $build_file = $builds_path."/".$build_id."/build.json";
     $build = json_decode(file_get_contents($build_file), true);
-    
+
     if ($search != "") {
         if (preg_match("/".$search."/", $build['package']) == 0) {
             continue;
-        } 
+        }
     }
-    
+
     $import_log_file = $builds_path."/".$build_id."/import.log";
     $import_request_file = $builds_path."/".$build_id."/import.request";
     $import_ignore_file = $builds_path."/".$build_id."/import.ignore";
     $import_error_file = $builds_path."/".$build_id."/import.error";
-    
+
     $all_ok = true;
     foreach($build['dists'] as $dist) {
         foreach($build['archs'] as $arch) {
@@ -92,14 +96,14 @@ foreach ($builds as $build_id) {
         $img = "aptdaemon-working";
         $img_title = "running";
     }
-        
+
     echo "<td style='width:350px;'>";
         echo "<img src='img/$img.png' title='$img_title'/>&nbsp;";
         echo "<a title='".htmlspecialchars($build['changed_by'])."' href='index.php?instance=$instance&page=build&build=".
             $build['build_id']."'>".$build['package']."-".$build['version']."</a>";
     echo "</td>";
     echo "<td style='width:90px;'><span style='font-size:0.6em;'>".$build['timestamp']."</span></td>";
-    
+
     echo "<td>";
     $all_ok = true;
     foreach($build['dists'] as $dist) {
@@ -139,26 +143,26 @@ foreach ($builds as $build_id) {
         }
     }
     echo "</td>";
-    
+
     echo "<td>";
     if ($all_ok) {
         $import_log_file = $builds_path."/".$build_id."/import.log";
         $import_request_file = $builds_path."/".$build_id."/import.request";
         $import_ignore_file = $builds_path."/".$build_id."/import.ignore";
         $import_error_file = $builds_path."/".$build_id."/import.error";
-        if (!file_exists($import_request_file) && !file_exists($import_ignore_file) 
+        if (!file_exists($import_request_file) && !file_exists($import_ignore_file)
                 && !file_exists($import_log_file) && !file_exists($import_error_file)) {
             echo "<script>$('#tr-build-".$build_id."').addClass('success');</script>";
         }
     }
     echo "</td>";
-    
+
     echo "</tr>";
-    
+
     flush();
-    
+
     $i += 1;
-    
+
     if (!isset($_GET['all'])) {
         if ($i >= $max_results) {
             break;

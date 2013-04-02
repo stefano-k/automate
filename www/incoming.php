@@ -2,6 +2,10 @@
 if (!isset($user))
     die();
 
+include 'functions.php';
+cleanParams();
+
+
 $files = glob($upload_path."/*");
 if (count($files) > 0) {
     echo "<div class='well well-small'><ul class='unstyled'>\n";

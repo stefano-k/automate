@@ -2,6 +2,10 @@
 if (!isset($user))
     die();
 
+include 'functions.php';
+cleanParams();
+
+
 $build_file = $builds_path."/".$_GET['build']."/build.json";
 $build_id = $_GET['build'];
 $build = json_decode(file_get_contents($build_file), true);
@@ -56,7 +60,7 @@ if ($all_ok) {
     $import_request_file = $builds_path."/".$build_id."/import.request";
     $import_ignore_file = $builds_path."/".$build_id."/import.ignore";
     $import_error_file = $builds_path."/".$build_id."/import.error";
-    
+
     if ($user['type'] <= USER_DEVELOPER) {
         if (isset($_GET['import'])) {
             if (!file_exists($import_log_file) && !file_exists($import_request_file) && !file_exists($import_ignore_file) && !file_exists($import_error_file)) {
@@ -75,7 +79,7 @@ if ($all_ok) {
             }
         }
     }
-    
+
     if (file_exists($import_log_file)) {
         echo "Imported";
     }
@@ -121,14 +125,14 @@ echo "</td></tr>\n";
 // BUILD RESULTS
 foreach($build['dists'] as $dist) {
     foreach($build['archs'] as $arch) {
-        
+
         echo "<tr><td><strong>$dist/$arch</strong></td>";
-        
+
         echo "<td><ul class='unstyled'>\n";
-        
+
         $log_file = $builds_path."/".$build['build_id']."/log/".$dist."_".$arch.".log";
         $update_file = $log_file.".update";
-        
+
         $res_file = $builds_path."/".$build_id."/log/".$dist."_".$arch.".ret";
         if (file_exists($res_file)) {
             $res = intval(file_get_contents($res_file));
@@ -141,18 +145,18 @@ foreach($build['dists'] as $dist) {
                 echo "<li><span class='label label-success'>success</span></li>\n";
             }
         }
-        
+
         if (file_exists($log_file) || file_exists($update_file))
             echo "<li><i class='icon-info-sign'></i> <a href='index.php?instance=$instance&page=log&amp;build=".$build['build_id'].
                 "&amp;dist=$dist&amp;arch=$arch'>build log</a></li>\n";
-        
+
         $result_files = glob($builds_path."/".$_GET['build']."/result/$dist/$arch/*");
-        
+
         if (count($result_files) > 0) {
             echo "<li><i class='icon-certificate'></i> <a href='index.php?instance=$instance&page=lintian&amp;build=".$build['build_id'].
                 "&amp;dist=$dist&amp;arch=$arch'>lintian check</a></li>\n";
         }
-        
+
         foreach($result_files as $result_file) {
             echo "<li>";
             echo icon_from_file($result_file);

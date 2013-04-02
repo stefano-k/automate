@@ -1,6 +1,9 @@
 <ul class="breadcrumb" style="margin:0 0 5px;">
 <li><a href="index.php">home</a> <span class="divider">/</span></li>
 <?
+	include 'functions.php';
+	cleanParams();
+
     echo "<li><a href='index.php?instance=$instance'>$instance</a> <span class='divider'>/</span></li> ";
     if (in_array($page, $items))
         echo "<li class='active'>$page</li>";
