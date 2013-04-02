@@ -7,16 +7,18 @@ include("config.php");
 include("auth.php");
 include("automate.php");
 
-$build_id = $_GET['build'];
+$build_id = (int) $_GET['build'];
+
 if (isset($_GET['source'])) {
-    $source_file = $_GET['source'];
-    $filepath = $builds_path."/".$build_id."/source/".$source_file;
+    $source_file = basename($_GET['source']);
+    $filepath = $builds_path . "/" . $build_id . "/source/" . $source_file;
 }
 else {
-    $build_file = $_GET['file'];
-    $filepath = $builds_path."/".$build_id."/result/".$build_file;
+    $build_file = basename($_GET['file']);
+    $filepath = $builds_path . "/" . $build_id . "/result/" . $build_file;
 }
-$extension = end(explode(".", $filepath));
+$pathinfo = pathinfo($filepath);
+$extension = $pathinfo['extension'];
 
 if (file_exists($filepath)) {
 
