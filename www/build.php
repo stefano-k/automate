@@ -160,8 +160,8 @@ foreach($build['dists'] as $dist) {
         foreach($result_files as $result_file) {
             echo "<li>";
             echo icon_from_file($result_file);
-            echo " <a href='download.php?instance=$instance&build=".$_GET['build']."&amp;file=".
-                urlencode(str_replace($builds_path."/".$_GET['build']."/result/", "", $result_file))."'>";
+            echo " <a href='download.php?instance=$instance&build=".$_GET['build']."&amp;dist=".$dist."&amp;arch=".$arch."&amp;file=".
+                urlencode(basename($result_file))."'>";
             echo basename($result_file)."</a> <span class='label'>".size_formatted($result_file)."</span>";
             echo "</li>\n";
         }

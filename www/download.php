@@ -14,7 +14,7 @@ if (isset($_GET['source'])) {
     $filepath = $builds_path . "/" . $build_id . "/source/" . $source_file;
 }
 else {
-    $build_file = basename($_GET['file']);
+    $build_file = basename($_GET['dist'])."/".basename($_GET['arch'])."/".basename($_GET['file']);
     $filepath = $builds_path . "/" . $build_id . "/result/" . $build_file;
 }
 $pathinfo = pathinfo($filepath);
