@@ -23,7 +23,7 @@ function cleanParams()
 
 
 	// get all values in $_POST
-	foreach ((array) array_keys($_GET) as $v)
+	foreach ((array) array_keys($_POST) as $v)
 	{
 		// clean the values
 		$arrPost[htmlspecialchars($v)] = filter_input(INPUT_POST, $v, FILTER_SANITIZE_SPECIAL_CHARS|FILTER_SANITIZE_ENCODED);
