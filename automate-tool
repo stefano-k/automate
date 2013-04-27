@@ -57,7 +57,7 @@ if args.prepare:
         shutil.copy("automate.conf.sample", os.path.join(instance_path, "automate.conf"))
         
         # cowbuilder
-        os.makedirs(os.path.join(instance_path, "pbuilder"))
+        os.makedirs(os.path.join(instance_path, "chroot"))
         
         # reprepro
         os.mkdir(os.path.join(instance_path, "repository"))
@@ -123,7 +123,7 @@ if args.create or args.update or args.create_new:
         for arch in config.as_list('archs'):
     
             if args.create or args.create_new:
-                base_cow_path = os.path.join(instance_path, "pbuilder", dist + "-" + arch, "base.cow")
+                base_cow_path = os.path.join(instance_path, "chroot", dist + "-" + arch, "base.cow")
                 base_cow_exists = os.path.exists(base_cow_path)
                 if not base_cow_exists:
                     os.makedirs(base_cow_path)
