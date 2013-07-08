@@ -71,7 +71,7 @@ foreach ($builds as $build_id) {
 
     echo "<tr id='tr-build-".$build_id."'>";
 
-    echo "<td style='width:43px;'><span class='badge badge-inverse'>".sprintf("%03s", $build['build_id'])."</span></td>";
+    echo "<td style='width:41px;'><span class='badge badge-inverse'>".sprintf("%03s", $build['build_id'])."</span></td>";
     if (file_exists($import_request_file)) {
         $img = "aptdaemon-wait";
         $img_title = "import requested";
@@ -97,12 +97,12 @@ foreach ($builds as $build_id) {
         $img_title = "running";
     }
 
-    echo "<td style='width:350px;'>";
+    echo "<td style='width:310px;'>";
         echo "<img src='img/$img.png' title='$img_title'/>&nbsp;";
         echo "<a title='".htmlspecialchars($build['changed_by'])."' href='index.php?instance=$instance&page=build&build=".
             $build['build_id']."'>".$build['package']."-".$build['version']."</a>";
     echo "</td>";
-    echo "<td style='width:90px;'><span style='font-size:0.6em;'>".$build['timestamp']."</span></td>";
+    echo "<td style='width:80px;'><span style='font-size:0.6em;'>".$build['timestamp']."</span></td>";
 
     echo "<td>";
     $all_ok = true;

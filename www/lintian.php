@@ -31,7 +31,7 @@ foreach($files as $file) {
         elseif ($row != "N:")
             echo str_replace("N:&nbsp;&nbsp;&nbsp;&nbsp;", "", $row);
 
-        echo "<br/>\n";
+        echo "\n";
     }
     flush();
 }
