@@ -3,7 +3,7 @@ EXTRAPACKAGES="@extrapackages@"
 ALLOWUNTRUSTED=yes
 
 # List of suites
-DEBIAN_SUITES=("wheezy" "squeeze")
+DEBIAN_SUITES=("wheezy")
 UBUNTU_SUITES=("saucy" "raring" "quantal" "precise" "oneiric" "natty" "maverick" "lucid" "karmic" "jaunty" "hardy")
 
 NAME="$DIST-$ARCH"
