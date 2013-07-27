@@ -4,7 +4,7 @@ ALLOWUNTRUSTED=yes
 
 # List of suites
 DEBIAN_SUITES=("wheezy" "squeeze")
-UBUNTU_SUITES=("raring" "quantal" "precise" "oneiric" "natty" "maverick" "lucid" "karmic" "jaunty" "hardy")
+UBUNTU_SUITES=("saucy" "raring" "quantal" "precise" "oneiric" "natty" "maverick" "lucid" "karmic" "jaunty" "hardy")
 
 NAME="$DIST-$ARCH"
 DEBOOTSTRAPOPTS=("--arch" "$ARCH" "${DEBOOTSTRAPOPTS[@]}")

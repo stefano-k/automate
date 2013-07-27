@@ -23,7 +23,7 @@ foreach ($build['dists'] as $build_dist) {
     $img = "";
     if (in_array($build_dist, array("jessie", "wheezy", "squeeze")))
         $img = "debian";
-    elseif (in_array($build_dist, array("oneiric", "precise", "quantal", "raring")))
+    elseif (in_array($build_dist, array("oneiric", "precise", "quantal", "raring", "saucy")))
         $img = "ubuntu";
     if ($img != "")
         echo "<img src='img/distros/$img.png' /> ";
