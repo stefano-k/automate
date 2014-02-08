@@ -21,11 +21,12 @@ import os
 
 class Reprepro():
     
-    def __init__(self, instance_path, dist, archs):
+    def __init__(self, instance_path, dist, archs, config):
         
         self.instance_path = instance_path
         self.dist = dist
         self.archs = archs
+        self.config = config
         self.name = functions.distro_name(dist)
 
     def config_exists(self):
@@ -45,7 +46,8 @@ class Reprepro():
         config_file.write("Components: main\n")
         config_file.write("UDebComponents: main\n")
         config_file.write("Architectures: %s source\n" % " ".join(self.archs))
-        config_file.write("SignWith: yes\n")
+        if self.config["gpg_sign"]:
+            config_file.write("SignWith: yes\n")
         config_file.write("DscIndices: Sources Release . .gz .bz2\n")
         config_file.write("DebIndices: Packages Release . .gz .bz2\n")
         config_file.write("\n")

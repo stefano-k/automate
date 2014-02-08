@@ -224,7 +224,7 @@ elif len(import_files) > 0:
     # import files with reprepro
     for dist in build['dists']:
         
-        rp = reprepro.Reprepro(instance_path, dist, build['archs'])
+        rp = reprepro.Reprepro(instance_path, dist, build['archs'], config)
         rp.include_packages(build_dir)
         
     

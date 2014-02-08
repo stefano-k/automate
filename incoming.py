@@ -129,27 +129,28 @@ class Incoming:
                             
                             functions.json_save(queue, queue_filename)
                     
-                    sendmail = os.popen("sendmail -t", "w")
-                    sendmail.write("From: %s\n" % "AutoMate <mate@karapetsas.com>")
-                    sendmail.write("To: %s\n" % deb_changes['Changed-By'])
-                    if deb_changes['Maintainer'] != deb_changes['Changed-By']:
-                        sendmail.write("Cc: %s\n" % deb_changes['Maintainer'])
-                    sendmail.write("Subject: %(changes)s ACCEPTED into %(instance)s\n" % \
-                        {
-                            "changes": os.path.basename(changes_file),
-                            "instance": self.instance
-                        })
-                    sendmail.write("\n")
-                    sendmail.write("Accepted:\n")
-                    for source_file in source_files:
-                        sendmail.write("%s\n" % source_file['name'])
-                    sendmail.write("\n")
-                    sendmail.write("%s\n" % deb_changes['Description'])
-                    sendmail.write("%s\n" % deb_changes['Changes'])
-                    sendmail.write("\n")
-                    sendmail.write("Thank you for your contribution to %s.\n" % self.instance)
-                    sendmail_result = sendmail.close()
-                                
+                    if self.config['send_mail']:
+                        sendmail = os.popen("sendmail -t", "w")
+                        sendmail.write("From: %s\n" % "AutoMate <automate@mate-desktop.org>")
+                        sendmail.write("To: %s\n" % deb_changes['Changed-By'])
+                        if deb_changes['Maintainer'] != deb_changes['Changed-By']:
+                            sendmail.write("Cc: %s\n" % deb_changes['Maintainer'])
+                        sendmail.write("Subject: %(changes)s ACCEPTED into %(instance)s\n" % \
+                            {
+                                "changes": os.path.basename(changes_file),
+                                "instance": self.instance
+                            })
+                        sendmail.write("\n")
+                        sendmail.write("Accepted:\n")
+                        for source_file in source_files:
+                            sendmail.write("%s\n" % source_file['name'])
+                        sendmail.write("\n")
+                        sendmail.write("%s\n" % deb_changes['Description'])
+                        sendmail.write("%s\n" % deb_changes['Changes'])
+                        sendmail.write("\n")
+                        sendmail.write("Thank you for your contribution to %s.\n" % self.instance)
+                        sendmail_result = sendmail.close()
+
             else:
                 
                 print "E: %s has not a valid GPG signature!" % os.path.basename(changes_file)

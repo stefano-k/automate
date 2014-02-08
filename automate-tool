@@ -114,7 +114,7 @@ if args.create or args.update or args.create_new:
         # reprepro
         for dist in config.as_list('dists'):
             
-            rp = reprepro.Reprepro(instance_path, dist, config.as_list('archs'))
+            rp = reprepro.Reprepro(instance_path, dist, config.as_list('archs'), config)
             if not rp.config_exists():
                 rp.create_config()
     

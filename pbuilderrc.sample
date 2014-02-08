@@ -3,8 +3,8 @@ EXTRAPACKAGES="@extrapackages@"
 ALLOWUNTRUSTED=yes
 
 # List of suites
-DEBIAN_SUITES=("wheezy")
-UBUNTU_SUITES=("saucy" "raring" "quantal" "precise" "oneiric" "natty" "maverick" "lucid" "karmic" "jaunty" "hardy")
+DEBIAN_SUITES=("jessie" "wheezy")
+UBUNTU_SUITES=("trusty" "saucy" "raring" "quantal" "precise" "oneiric" "natty" "maverick" "lucid" "karmic" "jaunty" "hardy")
 
 NAME="$DIST-$ARCH"
 DEBOOTSTRAPOPTS=("--arch" "$ARCH" "${DEBOOTSTRAPOPTS[@]}")

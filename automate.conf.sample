@@ -1,16 +1,13 @@
 concurrent_builders = 2
 
-#debian options
-type = deb
-dists = wheezy, oneiric, precise
+dists = jessie, wheezy, trusty, saucy
 archs = i386, amd64
 add_suffix = yes
 #precise_suffix = mysuffix1
 #oneiric_suffix= mysuffix2
 gpg_check = yes
+gpg_sign = yes
+send_mail = yes
 extra_packages = "lintian mate-archive-keyring"
 mirror = "localhost:9999"
 automate_www_path = "http://automate.mate-desktop.org"
-
-#fedora options
-type = rpm
