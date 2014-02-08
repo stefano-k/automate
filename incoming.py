@@ -129,7 +129,7 @@ class Incoming:
                             
                             functions.json_save(queue, queue_filename)
                     
-                    if self.config['send_mail']:
+                    if self.config.as_bool('send_mail'):
                         sendmail = os.popen("sendmail -t", "w")
                         sendmail.write("From: %s\n" % "AutoMate <automate@mate-desktop.org>")
                         sendmail.write("To: %s\n" % deb_changes['Changed-By'])
