@@ -48,8 +48,6 @@ class Reprepro():
         config_file.write("Architectures: %s source\n" % " ".join(self.archs))
         if self.config.as_bool("gpg_sign"):
             config_file.write("SignWith: yes\n")
-        else:
-            config_file.write("SignWith: no\n")
         config_file.write("DscIndices: Sources Release . .gz .bz2\n")
         config_file.write("DebIndices: Packages Release . .gz .bz2\n")
         config_file.write("\n")
