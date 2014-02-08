@@ -65,7 +65,7 @@ class Reprepro():
         os.system("date -R >> %(logfile)s" % {"logfile": import_log_file})
         
         # add source
-        os.system("reprepro -V --basedir %(basedir)s includedsc %(dist)s %(dsc)s >> %(logfile)s" % \
+        os.system("reprepro -V --basedir %(basedir)s -C main includedsc %(dist)s %(dsc)s >> %(logfile)s" % \
             {
                 "basedir": reprepro_path,
                 "dist": self.dist,
@@ -76,7 +76,7 @@ class Reprepro():
         # add architecture "all" packages from first arch
         all_debs = os.path.join(build_dir, "result", self.dist, self.archs[0], "*all.deb")
         if len(glob.glob(all_debs)) > 0:
-            os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
+            os.system("reprepro -V --basedir %(basedir)s -C main includedeb %(dist)s %(deb)s >> %(logfile)s" % \
                 {
                     "basedir": reprepro_path,
                     "dist": self.dist,
@@ -88,7 +88,7 @@ class Reprepro():
         for arch in self.archs:
             arch_debs = os.path.join(build_dir, "result", self.dist, arch, "*" + arch + ".deb")
             if len(glob.glob(arch_debs)) > 0:
-                os.system("reprepro -V --basedir %(basedir)s includedeb %(dist)s %(deb)s >> %(logfile)s" % \
+                os.system("reprepro -V --basedir %(basedir)s -C main includedeb %(dist)s %(deb)s >> %(logfile)s" % \
                 {
                     "basedir": reprepro_path,
                     "dist": self.dist,
