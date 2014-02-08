@@ -61,14 +61,6 @@ builds_path = os.path.join(instance_path, "builds")
 queue_path = os.path.join(instance_path, "queue")
 run_path = os.path.join(instance_path, "run")
 
-lock_files = glob.glob(os.path.join(run_path, "*.pid"))
-
-# if there are other builders, exit
-if len(lock_files) >= int(config['concurrent_builders']):
-    sys.exit(0)
-
-lock_file = os.path.join(run_path, str(os.getpid()) + ".pid")
-
 # load changes files
 changes_files = glob.glob(os.path.join(incoming_path, "*.changes"))
 
@@ -87,12 +79,6 @@ if len(import_files) > 0:
     
     build_dir = os.path.dirname(import_file)
     build = functions.json_load(os.path.join(build_dir, "build.json"))
-    
-    # open lockfile
-    lock_fd = open(lock_file, "w")
-    lock_fd.write(import_file + "\n")
-    lock_fd.close()
-    atexit.register(goodbye, lock_file)
     
     log_file = os.path.join(build_dir, "import.log")
     
@@ -128,6 +114,14 @@ if len(import_files) > 0:
         
         rp = reprepro.Reprepro(instance_path, dist, build['archs'], config)
         rp.include_packages(build_dir)
+
+lock_files = glob.glob(os.path.join(run_path, "*.pid"))
+
+# if there are other builders, exit
+if len(lock_files) >= int(config['concurrent_builders']):
+    sys.exit(0)
+
+lock_file = os.path.join(run_path, str(os.getpid()) + ".pid")
 
 # load build queue
 queue_files = glob.glob(os.path.join(queue_path, "*.json"))
