@@ -97,7 +97,7 @@ foreach ($builds as $build_id) {
         $img_title = "running";
     }
 
-    echo "<td style='width:310px;'>";
+    echo "<td style='min-width:310px;'>";
         echo "<img src='img/$img.png' title='$img_title'/>&nbsp;";
         echo "<a title='".htmlspecialchars($build['changed_by'])."' href='index.php?instance=$instance&page=build&build=".
             $build['build_id']."'>".$build['package']."-".$build['version']."</a>";
