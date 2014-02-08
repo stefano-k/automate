@@ -77,10 +77,60 @@ if len(changes_files) > 0:
     incoming_manager = incoming.Incoming(args.instance, config, incoming_path, builds_path, queue_path)
     incoming_manager.run_queue(args.debug)
 
-# load build queue
-queue_files = glob.glob(os.path.join(queue_path, "*.json"))
 # load import to repo requests
 import_files = glob.glob(os.path.join(builds_path, "*/import.request"))
+
+if len(import_files) > 0:
+    
+    import_file = import_files[0]
+    os.remove(import_file)
+    
+    build_dir = os.path.dirname(import_file)
+    build = functions.json_load(os.path.join(build_dir, "build.json"))
+    
+    # open lockfile
+    lock_fd = open(lock_file, "w")
+    lock_fd.write(import_file + "\n")
+    lock_fd.close()
+    atexit.register(goodbye, lock_file)
+    
+    log_file = os.path.join(build_dir, "import.log")
+    
+    # check sha1 of *.orig.tar.xz source if already in repository
+    # only for non-native source packages
+    src_files = glob.glob(os.path.join(build_dir, "source", "*.orig.*"))
+    if len(src_files) == 1:
+        src_file = src_files[0]
+        src_basename = os.path.basename(src_file)
+        if src_basename[0:4] == "lib":
+            pool_path = src_basename[0:4]
+        else:
+            pool_path = src_basename[0]
+        for dist in build['dists']:
+            repo_path = os.path.join(instance_path, "repository")
+            src_repo_file = os.path.join(repo_path, functions.distro_name(dist), \
+                "pool/main", pool_path, build['package'], src_basename)
+            if os.path.exists(src_repo_file):
+                if functions.sha1file(src_file) != functions.sha1file(src_repo_file):
+                    print "E: %s doesnt match with %s already in repo! Import failed!" % \
+                        (src_file, src_repo_file)
+                    import_error_file = os.path.join(build_dir, "import.error")
+                    import_error_fd = open(import_error_file, "w")
+                    import_error_fd.write("%s doesnt match with %s already in repo! Import failed!\n" % \
+                        (src_file, src_repo_file))
+                    import_error_fd.write("%s %s\n" % (src_file, functions.sha1file(src_file)))
+                    import_error_fd.write("%s %s\n\n" % (src_repo_file, functions.sha1file(src_repo_file)))
+                    import_error_fd.close()
+                    sys.exit(1)
+
+    # import files with reprepro
+    for dist in build['dists']:
+        
+        rp = reprepro.Reprepro(instance_path, dist, build['archs'], config)
+        rp.include_packages(build_dir)
+
+# load build queue
+queue_files = glob.glob(os.path.join(queue_path, "*.json"))
 
 if len(queue_files) > 0:
     
@@ -177,54 +227,3 @@ if len(queue_files) > 0:
     # remove temp source dir
     if distarch_source_dir != None:
         os.system("rm -rf " + distarch_source_dir + "/")
-
-elif len(import_files) > 0:
-    
-    import_file = import_files[0]
-    os.remove(import_file)
-    
-    build_dir = os.path.dirname(import_file)
-    build = functions.json_load(os.path.join(build_dir, "build.json"))
-    
-    # open lockfile
-    lock_fd = open(lock_file, "w")
-    lock_fd.write(import_file + "\n")
-    lock_fd.close()
-    atexit.register(goodbye, lock_file)
-    
-    log_file = os.path.join(build_dir, "import.log")
-    
-    # check sha1 of *.orig.tar.xz source if already in repository
-    # only for non-native source packages
-    src_files = glob.glob(os.path.join(build_dir, "source", "*.orig.*"))
-    if len(src_files) == 1:
-        src_file = src_files[0]
-        src_basename = os.path.basename(src_file)
-        if src_basename[0:4] == "lib":
-            pool_path = src_basename[0:4]
-        else:
-            pool_path = src_basename[0]
-        for dist in build['dists']:
-            repo_path = os.path.join(instance_path, "repository")
-            src_repo_file = os.path.join(repo_path, functions.distro_name(dist), \
-                "pool/main", pool_path, build['package'], src_basename)
-            if os.path.exists(src_repo_file):
-                if functions.sha1file(src_file) != functions.sha1file(src_repo_file):
-                    print "E: %s doesnt match with %s already in repo! Import failed!" % \
-                        (src_file, src_repo_file)
-                    import_error_file = os.path.join(build_dir, "import.error")
-                    import_error_fd = open(import_error_file, "w")
-                    import_error_fd.write("%s doesnt match with %s already in repo! Import failed!\n" % \
-                        (src_file, src_repo_file))
-                    import_error_fd.write("%s %s\n" % (src_file, functions.sha1file(src_file)))
-                    import_error_fd.write("%s %s\n\n" % (src_repo_file, functions.sha1file(src_repo_file)))
-                    import_error_fd.close()
-                    sys.exit(1)
-
-    # import files with reprepro
-    for dist in build['dists']:
-        
-        rp = reprepro.Reprepro(instance_path, dist, build['archs'], config)
-        rp.include_packages(build_dir)
-        
-    
