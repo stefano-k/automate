@@ -120,7 +120,7 @@ class Incoming:
                             queue_filename = os.path.join(self.queue_path, \
                                 "%(id)s_%(package)s_%(version)s_%(dist)s_%(arch)s.json" % \
                                 {
-                                    "id": build_id,
+                                    "id": build_id.zfill(5),
                                     "package": queue['package'],
                                     "version": queue['version'],
                                     "dist": dist,
