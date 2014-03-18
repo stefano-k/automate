@@ -1,6 +1,35 @@
 <?
 
 /**
+ * Check if the given arch is valid or not
+ */
+function valid_arch($strArch)
+{
+    $arrAllowedArch = array('');
+    
+    // check if the given arch is allowed
+    if (in_array($strArch, $arrAllowedArch) === false)
+    {
+        die('Invalid arch');
+    }
+}
+
+/**
+ * Check if the given dist is valid or not
+ */
+function valid_dist($strDist)
+{
+    $arrAllowedDist = array('');
+
+    // check if the diven dist is allowed
+    if (in_array($strDist, $arrAllowedDist) === false)
+    {
+        die('Invalid dist');
+    }
+}
+
+
+/**
  * Clean all $_GET and $_POST params
  * so they can be used in all other parts
  * of the script.
@@ -38,10 +67,20 @@ function cleanParams()
 	$_POST = $arrPost;
 
 
+    // if there is a dist or an arch, check if the values are allowed or not
+    if ($_GET['arch'] != '')
+    {
+        valid_arch($_GET['arch']);
+    }
+
+    if ($_GET['dist'] != '')
+    {
+        valid_dist($_GET['dist']);
+    }
+
 	// cleanup
 	unset($arrGet, $arrPost);
 }
-
 
 function size_formatted($file) {
     if (file_exists($file)) {
