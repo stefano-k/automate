@@ -5,7 +5,7 @@
  */
 function valid_arch($strArch)
 {
-    $arrAllowedArch = array('');
+    $arrAllowedArch = array('amd64', 'i386');
     
     // check if the given arch is allowed
     if (in_array($strArch, $arrAllowedArch) === false)
@@ -19,7 +19,8 @@ function valid_arch($strArch)
  */
 function valid_dist($strDist)
 {
-    $arrAllowedDist = array('');
+    $arrAllowedDist = array('stable', 'testing', 'unstable', 'sid', 'wheezy', 'jessie',
+                            "trusty", "saucy", "raring", "quantal", "precise", "oneiric", "natty", "maverick", "lucid", "karmic", "jaunty", "hardy");
 
     // check if the diven dist is allowed
     if (in_array($strDist, $arrAllowedDist) === false)
